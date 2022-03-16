@@ -5,8 +5,11 @@ export class Note {
 	tags: string[]
 	id: number
 
-	constructor(title : string, content : string) {
+	constructor(title: string, content: string) {
 		this.title = title
 		this.content = content
+		this.createDate = new Date().toISOString()
+		this.id = Date.now()
+		this.tags = []
 	}
 }
