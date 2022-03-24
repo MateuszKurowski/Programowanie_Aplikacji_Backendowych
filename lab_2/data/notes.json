@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Notatka testowa",
+    "content": "Treść notatki testowej na uczelnie WSEI",
+    "createDate": "2022-03-24T00:37:04.225Z",
+    "id": 1648082224225,
+    "tags": [
+      {
+        "id": 1648080280043,
+        "name": "Uczelnia"
+      },
+      {
+        "id": 1648081672718,
+        "name": "WSEI"
+      }
+    ]
+  }
+]
