@@ -14,5 +14,6 @@ export class Note {
 		this.createDate = new Date().toISOString()
 		this.id = Date.now()
 		this.tags = []
+		this.owner = ""
 	}
 }

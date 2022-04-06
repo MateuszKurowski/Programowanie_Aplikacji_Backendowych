@@ -3,14 +3,10 @@ import { Request, Response } from 'express'
 import { Note } from './note'
 import { Tag } from './tags'
 import fs from 'fs'
-import { isJsxOpeningElement } from 'typescript'
 import { UserModel } from './user'
 import jwt from 'jsonwebtoken'
 
 const app = express()
-
-//const notes: Note[] = []
-//const tagsList: Tag[] = []
 
 async function readStorage(filePath: string) {
 	try {
@@ -304,7 +300,7 @@ app.post('/login', async function (req: Request, res: Response) {
 app.get('/login/:login', async function (req: Request, res: Response) {
 	console.log('Pobranie użytkownika..')
 	console.log(req.body)
-	const login : string = req.params.login
+	const login: string = req.params.login
 	await readStorage('data/logins.json').then(async loginData => {
 		const users: UserModel[] = loginData
 		const user = users.find(x => x.userLogin == login)
@@ -313,18 +309,17 @@ app.get('/login/:login', async function (req: Request, res: Response) {
 	})
 })
 
-app.put('/login/:login', async function (req: Request, res : Response)
-{
-	console.log('Zmiana użytkownika')
-	console.log(req.headers.authorization)
-	console.log(req.body)
-	await readStorage('data/logins.json').then(async loginData => 
-	{
-		const users: UserModel[] = loginData
-		const user = user.find
-		})
-
-}
+// app.put('/login/:login', async function (req: Request, res : Response)
+// {
+// 	console.log('Zmiana użytkownika')
+// 	console.log(req.headers.authorization)
+// 	console.log(req.body)
+// 	await readStorage('data/logins.json').then(async loginData =>
+// 	{
+// 		const users: UserModel[] = loginData
+// 		//const user = user.find
+// 		})
+// }
 //#endregion
 
 app.listen(3000)
