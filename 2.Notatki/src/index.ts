@@ -148,7 +148,7 @@ app.delete('/note/:id', async function (req: Request, res: Response) {
 })
 
 // Pobranie wszystkich notatek
-app.get('/notes', async function (req: Request, res: Response) {
+app.get('/note/list', async function (req: Request, res: Response) {
 	console.log('Pobieram liste notatek..')
 	console.log(req.headers.authorization)
 	console.log(req.body)
