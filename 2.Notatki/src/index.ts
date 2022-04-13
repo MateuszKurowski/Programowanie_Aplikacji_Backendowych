@@ -5,6 +5,10 @@ import { Tag } from './tags'
 import fs from 'fs'
 import { UserModel } from './user'
 import jwt from 'jsonwebtoken'
+import { encode, TAlgorithm } from "jwt-simple"
+import { sign, SignOptions } from 'jsonwebtoken';
+import * as path from 'path';
+import { createSecretKey } from 'crypto'
 
 const app = express()
 
@@ -265,49 +269,55 @@ app.get('/tags', async function (req: Request, res: Response) {
 
 //#region login
 app.post('/login', async function (req: Request, res: Response) {
-	console.log('Tworzenie nowego użytnika..')
-	console.log(req.headers.authorization)
-	console.log(req.body)
+	// console.log('Tworzenie nowego użytnika..')
+	// console.log(req.headers.authorization)
+	// console.log(req.body)
 
-	const login: string = req.body.login
-	const password: string = req.body.password
-	if (!(login && password)) {
-		res.status(401).send('Proszę podać token.')
-		return
-	}
+	// const login: string = req.body.login
+	// const password: string = req.body.password
+	// if (login || password) {
+	// 	res.status(401).send('Proszę  podać dane do logowania.')
+	// 	return
+	// }
 
-	await readStorage('data/logins.json').then(async loginData => {
-		const users: UserModel[] = loginData
-		const userInBase = users.find(x => x.userLogin.toLowerCase() == login.toLowerCase().trim())
-		if (userInBase == null) {
-			res.status(400).send('Podany użytkownik już istnieje.')
-			return
-		}
+	const token = generateToken('testowyLogin', '123')
+	console.log('Token: ' + token)
+	const payload = jwt.verify(token, 'twojstary')
+	console.log('Weryfikacja: ' + payload)
+	res.send(payload)
 
-		const user: UserModel = new UserModel(login, password)
-		const token = jwt.sign({ login }, process.env.TOKEN_KEY, {
-			expiresIn: '2h',
-		})
-		user.userToken = token
+	// await readStorage('data/logins.json').then(async loginData => {
+	// 	const users: UserModel[] = loginData
+	// 	const userInBase = users.find(x => x.userLogin.toLowerCase() == login.toLowerCase().trim())
+	// 	if (userInBase == null) {
+	// 		res.status(400).send('Podany użytkownik już istnieje.')
+	// 		return
+	// 	}
 
-		users.push(user)
-		await updateStorage(JSON.stringify(users, null, 2), 'data/logins.json')
+	// 	const user: UserModel = new UserModel(login, password)
+	// 	const token = jwt.sign({ login }, process.env.TOKEN_KEY, {
+	// 		expiresIn: '2h',
+	// 	})
+	// 	user.userToken = token
 
-		res.status(201).send('Twój token to: ' + token)
-	})
+	// 	users.push(user)
+	// 	await updateStorage(JSON.stringify(users, null, 2), 'data/logins.json')
+
+		// res.status(201).send('Twój token to: ' + token)
+	// })
 })
 
-app.get('/login/:login', async function (req: Request, res: Response) {
-	console.log('Pobranie użytkownika..')
-	console.log(req.body)
-	const login: string = req.params.login
-	await readStorage('data/logins.json').then(async loginData => {
-		const users: UserModel[] = loginData
-		const user = users.find(x => x.userLogin == login)
-		if (user) res.status(404).send('Podano błędny login.')
-		else res.status(200).send(user)
-	})
-})
+// app.get('/login/:login', async function (req: Request, res: Response) {
+// 	console.log('Pobranie użytkownika..')
+// 	console.log(req.body)
+// 	const login: string = req.params.login
+// 	await readStorage('data/logins.json').then(async loginData => {
+// 		const users: UserModel[] = loginData
+// 		const user = users.find(x => x.userLogin == login)
+// 		if (user) res.status(404).send('Podano błędny login.')
+// 		else res.status(200).send(user)
+// 	})
+// })
 
 // app.put('/login/:login', async function (req: Request, res : Response)
 // {
@@ -320,6 +330,16 @@ app.get('/login/:login', async function (req: Request, res: Response) {
 // 		//const user = user.find
 // 		})
 // }
+
+function generateToken(login: string, userId: string) 
+{
+	const payload = {
+		Login: login,
+		UserId: userId,
+	};
+	return sign(payload, 'twojstary')
+	}
+
 //#endregion
 
 app.listen(3000)
