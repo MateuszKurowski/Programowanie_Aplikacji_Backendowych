@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.21",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/jwt-simple": "^0.5.33"
   },
   "description": ""
