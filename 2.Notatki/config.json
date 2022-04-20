@@ -1,6 +1,5 @@
 {
-    "__comment__": "files/database",
-    "saveData": "files",
-    "secret": "mateuszKurowski"
-  }
-  
+	"__comment__": "files/database",
+	"saveData": "files",
+	"secret": "mateuszKurowski"
+}

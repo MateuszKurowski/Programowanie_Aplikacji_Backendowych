@@ -10,4 +10,8 @@ export class Tag {
 					throw new Error('Podany tag już istnieje')
 			})
 	}
+
+	Save() {
+		CheckDatabaseLocation().saveTag(this)
+	}
 }

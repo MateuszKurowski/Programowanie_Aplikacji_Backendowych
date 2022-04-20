@@ -19,7 +19,7 @@ export interface DatabaseOperation {
 }
 
 export function CheckDatabaseLocation(): DatabaseOperation {
-	const saveData = require('../config.json')
+	const saveData = require('../../config.json')
 	switch (saveData) {
 		case 'database':
 			return new SQLDatabase()

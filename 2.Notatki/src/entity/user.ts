@@ -18,4 +18,8 @@ export class User {
 					throw new Error('Użytkownik z podanym loginem już istnieje!')
 			})
 	}
+
+	Save() {
+		CheckDatabaseLocation().saveUser(this)
+	}
 }
