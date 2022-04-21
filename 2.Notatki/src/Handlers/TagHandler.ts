@@ -1,10 +1,11 @@
-const Tag_Controller = require('../Handlers/Controllers/TagController')
+const routerTag = require('express').Router()
+const Tag_Controller = require('../Controllers/TagController')
 
-router
+routerTag
 	.get('/list', Tag_Controller.Tag_Get_All)
 	.post('/', Tag_Controller.Tag_Post)
 	.get('/:id', Tag_Controller.Tag_Get)
 	.put('/:id', Tag_Controller.Tag_Put)
-    .delete('/:id', Tag_Controller.Tag_Delete)
+	.delete('/:id', Tag_Controller.Tag_Delete)
 
-module.exports = router
+module.exports = routerTag

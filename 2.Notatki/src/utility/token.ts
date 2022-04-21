@@ -1,4 +1,5 @@
 import { sign, verify } from 'jsonwebtoken'
+import { Request } from 'express'
 import { User } from '../entity/user'
 import { secret } from '../../config.json'
 import { CheckDatabaseLocation } from '../interfaces/database'
@@ -15,7 +16,10 @@ export function GenerateToken(user: User) {
 	return sign(payload, secret, { expiresIn: '1h' })
 }
 
-export function CheckToken(token: string): boolean {
+export function CheckToken(req: Request): boolean {
+	const token = req.headers.authorization?.split(' ')[1]
+	if (!token) return false
+
 	const payload = verify(token, secret) as TokenPayload
 	CheckDatabaseLocation()
 		.downloadUsers()

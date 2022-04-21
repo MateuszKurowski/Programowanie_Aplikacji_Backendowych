@@ -1,7 +1,7 @@
 import express from 'express'
 
-const noteRoute = require('./Handlers/NoteHandler')
 const tagRoute = require('./Handlers/TagHandler')
+const noteRoute = require('./Handlers/NoteHandler')
 const userRoute = require('./Handlers/UserHandler')
 
 const app = express()

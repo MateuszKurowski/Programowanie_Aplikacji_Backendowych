@@ -1,4 +1,3 @@
-import { error } from 'console'
 import { Response, Request } from 'express'
 import { User } from '../entity/user'
 import { CheckDatabaseLocation } from '../interfaces/database'
@@ -26,12 +25,13 @@ exports.User_Login = async function (req: Request, res: Response) {
 
 // Odczytanie użytkownika
 exports.User_Get = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
-	const userId = DownloadPaylod(token)
+
+	const token = req.headers.authorization?.split(' ')[1]
+	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(usersData => {
 		const user = usersData.find(x => x.id == userId)
 		res.status(200).send(user)
@@ -66,12 +66,13 @@ exports.User_Post = async function (req: Request, res: Response) {
 
 // Modyfikacja użytkownika
 exports.User_Put = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
-	const userId = DownloadPaylod(token)
+
+	const token = req.headers.authorization?.split(' ')[1]
+	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(usersData => {
 		const user = usersData.find(x => x.id == userId)
 
@@ -95,12 +96,13 @@ exports.User_Put = async function (req: Request, res: Response) {
 
 // Usunięcie użytkownika
 exports.User_Delete = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
-	const userId = DownloadPaylod(token)
+
+	const token = req.headers.authorization?.split(' ')[1]
+	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(usersData => {
 		const index = usersData.findIndex(x => x.id == userId)
 		usersData.splice(index, 1)
@@ -112,8 +114,7 @@ exports.User_Delete = async function (req: Request, res: Response) {
 //#region Admin
 // Odczytanie listy użytkowników
 exports.User_Get_All = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -124,8 +125,7 @@ exports.User_Get_All = async function (req: Request, res: Response) {
 
 // Odczytanie użytkownika po ID
 exports.User_Get_By_Id = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -139,8 +139,7 @@ exports.User_Get_By_Id = async function (req: Request, res: Response) {
 
 // Edycja użytkownika po ID
 exports.User_Put_By_Id = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -167,8 +166,7 @@ exports.User_Put_By_Id = async function (req: Request, res: Response) {
 
 // Usuwanie użytkownika po ID
 exports.User_Delete_By_Id = async function (req: Request, res: Response) {
-	const token = req.headers.authorization?.split(' ')[1]
-	if (!token || !CheckToken(token)) {
+	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}

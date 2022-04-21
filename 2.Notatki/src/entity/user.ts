@@ -23,3 +23,11 @@ export class User {
 		CheckDatabaseLocation().saveUser(this)
 	}
 }
+
+export async function GetUserById(userId: number) {
+	if (!userId || userId == 0) return null
+	const users = await CheckDatabaseLocation().downloadUsers()
+	const user = users?.find(x => x.id == userId)
+	if (!user) return null
+	return user
+}

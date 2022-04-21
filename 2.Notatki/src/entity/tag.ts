@@ -15,3 +15,22 @@ export class Tag {
 		CheckDatabaseLocation().saveTag(this)
 	}
 }
+
+export async function IsTagExist(tagName: string) {
+	if (!tagName) return null
+	const tags = await CheckDatabaseLocation().downloadTags()
+	const existingTag = tags.find(x => x.name.toLowerCase() == tagName.toLowerCase().trim())
+	if (!existingTag) {
+		const tag = new Tag(tagName.trim())
+		tag.Save()
+		return tag
+	} else return existingTag
+}
+
+export async function GetTagById(tagId: number) {
+	if (!tagId || tagId == 0) return null
+	const tags = await CheckDatabaseLocation().downloadTags()
+	const tag = tags?.find(x => x.id == tagId)
+	if (!tag) return null
+	return tag
+}

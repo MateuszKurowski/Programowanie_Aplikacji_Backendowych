@@ -1,6 +1,7 @@
-const User_Controller = require('../Handlers/Controllers/UserController')
+const routerUser = require('express').Router()
+const User_Controller = require('../Controllers/UserController')
 
-router
+routerUser
 	.get('/token', User_Controller.User_Login)
 	.get('/', User_Controller.User_Get)
 	.post('/', User_Controller.User_Post)
@@ -9,7 +10,7 @@ router
 	//Admin
 	.get('/list', User_Controller.User_Get_All)
 	.get('/:id', User_Controller.User_Get_By_Id)
-	.put('/:id', User_Controller.User_Put_By_ID)
-	.delete('/:id', User_Controller.User_Delete_By_ID)
+	.put('/:id', User_Controller.User_Put_By_Id)
+	.delete('/:id', User_Controller.User_Delete_By_Id)
 
-module.exports = router
+module.exports = routerUser
