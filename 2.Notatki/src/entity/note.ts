@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import { CheckDatabaseLocation } from '../interfaces/database'
 import { Tag } from './tag'
 type AccessModifier = 'Public' | 'Private'
@@ -5,17 +6,14 @@ type AccessModifier = 'Public' | 'Private'
 export class Note {
 	public readonly createDate = new Date().toISOString()
 	public readonly id = Date.now()
-	public access: AccessModifier
 
 	constructor(
 		public title: string,
 		public content: string,
 		public ownerId: number,
 		public tags?: Tag[],
-		accessToNote: AccessModifier = 'Private'
-	) {
-		this.access = accessToNote
-	}
+		public accessToNote: AccessModifier = 'Private'
+	) {}
 
 	Save() {
 		CheckDatabaseLocation().saveNote(this)
@@ -39,3 +37,16 @@ export async function GetNotesByUserId(userId: number) {
 	if (!userNotes) return null
 	return userNotes
 }
+
+export const notesSchema = new mongoose.Schema(
+	{
+		title: String,
+		content: String,
+		ownerId: Number,
+		access: String,
+		tags: [String],
+	},
+	{
+		timestamps: true,
+	}
+)

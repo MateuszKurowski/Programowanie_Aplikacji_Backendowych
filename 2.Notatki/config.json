@@ -1,5 +1,7 @@
 {
 	"__comment__": "files/database",
 	"saveData": "files",
-	"secret": "mateuszKurowski"
+	"secret": "mateuszKurowski",
+	"connectionString": "mongodb+srv://Admin:BLsJmkTd24wULdKb@notatka.8q69k.mongodb.net/Notatka?retryWrites=true&w=majority",
+	"userDatabasePassword": "BLsJmkTd24wULdKb"
 }

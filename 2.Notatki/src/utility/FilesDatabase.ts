@@ -2,9 +2,9 @@ import fs from 'fs'
 import { Note } from '../entity/note'
 import { Tag } from '../entity/tag'
 import { User } from '../entity/user'
-import { DatabaseOperation } from '../interfaces/database'
+import { DataStorage } from '../interfaces/database'
 
-export class FilesDatabase implements DatabaseOperation {
+export class FilesDatabase implements DataStorage {
 	//#region Paths
 	private notesPath: string = '././data/notes.json'
 	private tagsPath: string = '././data/tags.json'

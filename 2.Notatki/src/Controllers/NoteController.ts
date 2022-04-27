@@ -7,7 +7,7 @@ import { CheckToken, DownloadPaylod } from '../utility/token'
 const database = CheckDatabaseLocation()
 
 // Odczytanie notatek zalogowanego użytkownika
-exports.User_Get_By_User = async function (req: Request, res: Response) {
+exports.Note_Get_By_User = async function (req: Request, res: Response) {
 	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
@@ -20,7 +20,8 @@ exports.User_Get_By_User = async function (req: Request, res: Response) {
 	else res.status(404).send('Nie posiadasz żadnych notatek.')
 }
 
-exports.User_Get_By_User_Public = async function (req: Request, res: Response) {
+// Odczytanie notatek publicznych zalogowanego użytkownika
+exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return
@@ -41,7 +42,8 @@ exports.User_Get_By_User_Public = async function (req: Request, res: Response) {
 	else res.status(404).send('Nie posiadasz żadnych publicznych notatek')
 }
 
-exports.User_Get_By_User_Private = async function (req: Request, res: Response) {
+// Odczytanie notatek prywatnych zalogowanego użytkownika
+exports.Note_Get_By_User_Private = async function (req: Request, res: Response) {
 	if (!CheckToken(req)) {
 		res.status(401).send('Podano błędny token!')
 		return

@@ -1,9 +1,11 @@
 import { Note } from '../entity/note'
 import { Tag } from '../entity/tag'
 import { User } from '../entity/user'
-import { DatabaseOperation } from '../interfaces/database'
+import { DataStorage } from '../interfaces/database'
+import { ChangeStreamDocument } from "mongodb";
+import mongoose from "mongoose";
 
-export class SQLDatabase implements DatabaseOperation {
+export class SQLDatabase implements DataStorage {
 	saveNote(notes: Note) {
 		throw new Error('Method not implemented.')
 	}
@@ -31,4 +33,9 @@ export class SQLDatabase implements DatabaseOperation {
 	downloadTags(): Promise<Tag[]> {
 		throw new Error('Method not implemented.')
 	}
+}
+
+export function ConnectToDatabase()
+{
+	
 }

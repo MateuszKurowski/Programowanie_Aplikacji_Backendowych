@@ -4,7 +4,7 @@ import { Tag } from '../entity/tag'
 import { FilesDatabase } from '../utility/FilesDatabase'
 import { SQLDatabase } from '../utility/SQLDatabase'
 
-export interface DatabaseOperation {
+export interface DataStorage {
 	saveNote(notes: Note): any
 	saveNotes(notes: Note[]): any
 	downloadNotes(): Promise<Note[]>
@@ -18,8 +18,8 @@ export interface DatabaseOperation {
 	downloadTags(): Promise<Tag[]>
 }
 
-export function CheckDatabaseLocation(): DatabaseOperation {
-	const saveData = require('../../config.json')
+export function CheckDatabaseLocation(): DataStorage {
+	const saveData = require('../../config.json').saveData
 	switch (saveData) {
 		case 'database':
 			return new SQLDatabase()
