@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import mongoose from 'mongoose'
 import { CheckDatabaseLocation } from '../interfaces/database'
 import { Tag } from './tag'
@@ -8,11 +9,11 @@ export class Note {
 	public readonly id = Date.now()
 
 	constructor(
-		public title: string,
-		public content: string,
-		public ownerId: number,
-		public tags?: Tag[],
-		public accessToNote: AccessModifier = 'Private'
+		public Title: string,
+		public Content: string,
+		public OwnerId: number,
+		public Tags?: Tag[],
+		public IsPublic: Boolean = false
 	) {}
 
 	Save() {
@@ -32,19 +33,34 @@ export async function GetNotesByUserId(userId: number) {
 	if (!userId || userId == 0) return null
 	const notes = await CheckDatabaseLocation().downloadNotes()
 	const userNotes = notes?.filter(function (Note) {
-		return Note.ownerId == userId
+		return Note.OwnerId == userId
 	})
 	if (!userNotes) return null
 	return userNotes
 }
 
-export const notesSchema = new mongoose.Schema(
+export async function GetNotes()
+{
+	return await CheckDatabaseLocation().downloadNotes()
+}
+
+export const NoteSchema = new mongoose.Schema(
 	{
-		title: String,
-		content: String,
-		ownerId: Number,
-		access: String,
-		tags: [String],
+		Title: {
+			type: String,
+			required: true,
+		},
+		Content: String,
+		OwnerId: {
+			type: ObjectId,
+			required: true,
+		},
+		Tags: [ObjectId],
+		IsPublic: {
+			type: Boolean,
+			required: true,
+			default: false,
+		},
 	},
 	{
 		timestamps: true,

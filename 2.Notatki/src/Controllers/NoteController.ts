@@ -1,6 +1,5 @@
 import { Response, Request } from 'express'
-import { userInfo } from 'os'
-import { GetNoteById, GetNotesByUserId, Note } from '../entity/note'
+import { GetNoteById, GetNotes, GetNotesByUserId, Note } from '../entity/note'
 import { IsTagExist, Tag } from '../entity/tag'
 import { CheckDatabaseLocation } from '../interfaces/database'
 import { CheckToken, DownloadPaylod } from '../utility/token'
@@ -35,7 +34,7 @@ exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 	}
 
 	const userNotesPublic = userNotes.filter(function (Note) {
-		return Note.access == 'Public'
+		return Note.IsPublic == true
 	})
 
 	if (userNotesPublic && userNotesPublic.length > 0) res.status(200).send(userNotesPublic)
@@ -57,7 +56,7 @@ exports.Note_Get_By_User_Private = async function (req: Request, res: Response) 
 	}
 
 	const userNotesPrivate = userNotes.filter(function (Note) {
-		return Note.access == 'Private'
+		return Note.IsPublic == false
 	})
 
 	if (userNotesPrivate && userNotesPrivate.length > 0) res.status(200).send(userNotesPrivate)
@@ -101,7 +100,7 @@ exports.Note_Post = async function (req: Request, res: Response) {
 			const tag = await IsTagExist(tagName)
 			if (tag) noteTags.push(tag)
 		})
-		note.tags = noteTags
+		note.Tags = noteTags
 	}
 	note.Save()
 
@@ -124,10 +123,10 @@ exports.Note_Put = async function (req: Request, res: Response) {
 	}
 
 	if (req.body.title != null) {
-		note.title = req.body.title
+		note.Title = req.body.title
 	}
 
-	if (req.body.content != null) note.content = req.body.content
+	if (req.body.content != null) note.Content = req.body.content
 
 	if (req.body.tagsNames != null) {
 		const sendingTags = req.body.tags?.split(',')
@@ -137,7 +136,7 @@ exports.Note_Put = async function (req: Request, res: Response) {
 				const tag = await IsTagExist(tagName)
 				if (tag) noteTags.push(tag)
 			})
-			note.tags = noteTags
+			note.Tags = noteTags
 		}
 	}
 
@@ -145,10 +144,10 @@ exports.Note_Put = async function (req: Request, res: Response) {
 		const access = req.body.access
 		switch (access.toLower().Trim()) {
 			case 'public':
-				note.access = 'Public'
+				note.IsPublic = true
 				break
 			case 'private':
-				note.access = 'Private'
+				note.IsPublic = false
 				break
 			default:
 				console.log('Nie udało się zmienić dostępności notatki.')
@@ -172,7 +171,7 @@ exports.Note_Delete = async function (req: Request, res: Response) {
 		res.status(404).send('Nie odnaleziono notatki z podanym ID.')
 		return
 	}
-	const notes = await database.downloadNotes()
+	const notes = await GetNotes()
 	const index = notes?.findIndex(x => x.id == note?.id)
 	notes.splice(index, 1)
 	await database.saveNotes(notes)
@@ -187,7 +186,7 @@ exports.Note_Get_All = async function (req: Request, res: Response) {
 		return
 	}
 
-	const notes = await database.downloadNotes()
+	const notes = await GetNotes()
 	if (notes.length > 0) res.status(200).send(notes)
 	else res.status(404).send('Nie ma żadnych notatek.')
 }

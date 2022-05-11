@@ -2,8 +2,9 @@ import { Note } from '../entity/note'
 import { Tag } from '../entity/tag'
 import { User } from '../entity/user'
 import { DataStorage } from '../interfaces/database'
-import { ChangeStreamDocument } from "mongodb";
-import mongoose from "mongoose";
+import { ChangeStreamDocument, MongoClient, ServerApiVersion } from 'mongodb'
+import mongoose from 'mongoose'
+import { connectionString } from '../../config.json'
 
 export class SQLDatabase implements DataStorage {
 	saveNote(notes: Note) {
@@ -35,7 +36,9 @@ export class SQLDatabase implements DataStorage {
 	}
 }
 
-export function ConnectToDatabase()
-{
+export async function ConnectToDatabase() {
+	console.log('Connecting to mongo');
+    const db = await mongoose.connect(connectionString)
+    console.log('Mongo Connected!')
 	
 }

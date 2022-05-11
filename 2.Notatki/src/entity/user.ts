@@ -1,4 +1,6 @@
 import { CheckDatabaseLocation } from '../interfaces/database'
+import { ObjectId } from 'mongodb'
+import mongoose from 'mongoose'
 
 export class User {
 	public readonly createDate = new Date().toISOString()
@@ -31,3 +33,29 @@ export async function GetUserById(userId: number) {
 	if (!user) return null
 	return user
 }
+
+export const UserSchema = new mongoose.Schema(
+	{
+		Login: {
+			type: String,
+			required: true,
+			lowercase: true,
+		},
+		Password: {
+			type: String,
+			required: true,
+		},
+		Name: {
+			type: String,
+		},
+		Surname: {
+			type: String,
+		},
+		DateOfBirth: {
+			type: Date,
+		},
+	},
+	{
+		timestamps: true,
+	}
+)

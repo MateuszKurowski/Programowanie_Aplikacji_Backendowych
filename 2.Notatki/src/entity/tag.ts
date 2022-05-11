@@ -1,4 +1,6 @@
 import { CheckDatabaseLocation } from '../interfaces/database'
+import { ObjectId } from 'mongodb'
+import mongoose from 'mongoose'
 
 export class Tag {
 	public readonly id = Date.now()
@@ -34,3 +36,17 @@ export async function GetTagById(tagId: number) {
 	if (!tag) return null
 	return tag
 }
+
+export const tagSchema = new mongoose.Schema(
+	{
+		name: {
+			type: String,
+			required: true,
+			unique: true,
+			uppercase: true
+		}
+	},
+	{
+		timestamps: true,
+	}
+)
