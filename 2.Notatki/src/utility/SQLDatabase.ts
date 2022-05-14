@@ -1,44 +1,72 @@
-import { Note } from '../entity/note'
-import { Tag } from '../entity/tag'
-import { User } from '../entity/user'
+import { Note, NoteModel } from '../entity/note'
+import { Tag, TagModel } from '../entity/tag'
+import { User, UserModel } from '../entity/user'
 import { DataStorage } from '../interfaces/database'
-import { ChangeStreamDocument, MongoClient, ServerApiVersion } from 'mongodb'
+import { ChangeStreamDocument, MongoClient, ObjectID, ServerApiVersion } from 'mongodb'
 import mongoose from 'mongoose'
 import { connectionString } from '../../config.json'
 
 export class SQLDatabase implements DataStorage {
-	saveNote(notes: Note) {
-		throw new Error('Method not implemented.')
+	async saveNote(note: Note) {
+		const db = await mongoose.connect(connectionString)
+		const noteMongo = new NoteModel({
+			Title: note.Title,
+			Content: note.Content,
+			OwnerId: note.OwnerId,
+			Tags: note.Tags,
+			IsPublic: note.IsPublic,
+		}).Save()
 	}
-	saveNotes(notes: Note[]) {
-		throw new Error('Method not implemented.')
+	async deleteNote(note: Note) {
+		const db = await mongoose.connect(connectionString)
+		NoteModel.findByIdAndDelete(new ObjectID(note.id.toString()))
 	}
-	downloadNotes(): Promise<Note[]> {
-		throw new Error('Method not implemented.')
+	async updateNote(note: Note) {
+		const db = await mongoose.connect(connectionString)
+		NoteModel.findByIdAndUpdate(note.id)
 	}
-	saveUser(users: User) {
-		throw new Error('Method not implemented.')
+	async downloadNotes(): Promise<Note[]> {
+		const db = await mongoose.connect(connectionString)
+		return NoteModel.find()
 	}
-	saveUsers(users: User[]) {
-		throw new Error('Method not implemented.')
+	async saveUser(user: User) {
+		const db = await mongoose.connect(connectionString)
+		const userMongo = new UserModel({
+			Login: user.login,
+			Password: user.password,
+			Name: user.name,
+			Surname: user.surname,
+			DateOfBirth: user.dateOfBirth,
+		}).Save()
 	}
-	downloadUsers(): Promise<User[]> {
-		throw new Error('Method not implemented.')
+	async deleteUser(user: User) {
+		const db = await mongoose.connect(connectionString)
+		UserModel.findByIdAndDelete(new ObjectID(user.id.toString()))
 	}
-	saveTag(tags: Tag) {
-		throw new Error('Method not implemented.')
+	async updateUser(user: User) {
+		const db = await mongoose.connect(connectionString)
+		UserModel.findByIdAndUpdate(user.id)
 	}
-	saveTags(tags: Tag[]) {
-		throw new Error('Method not implemented.')
+	async downloadUsers(): Promise<User[]> {
+		const db = await mongoose.connect(connectionString)
+		return UserModel.find()
 	}
-	downloadTags(): Promise<Tag[]> {
-		throw new Error('Method not implemented.')
+	async saveTag(tag: Tag) {
+		const db = await mongoose.connect(connectionString)
+		const tagMongo = new TagModel({
+			Name: tag.name,
+		}).Save()
 	}
-}
-
-export async function ConnectToDatabase() {
-	console.log('Connecting to mongo');
-    const db = await mongoose.connect(connectionString)
-    console.log('Mongo Connected!')
-	
+	async deleteTag(tag: Tag) {
+		const db = await mongoose.connect(connectionString)
+		TagModel.findByIdAndDelete(new ObjectID(tag.id.toString()))
+	}
+	async updateTag(tag: Tag) {
+		const db = await mongoose.connect(connectionString)
+		TagModel.findByIdAndUpdate(tag.id)
+	}
+	async downloadTags(): Promise<Tag[]> {
+		const db = await mongoose.connect(connectionString)
+		return TagModel.find()
+	}
 }

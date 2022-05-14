@@ -6,7 +6,7 @@ const database = CheckDatabaseLocation()
 
 // Odczytanie listy tagów
 exports.Tag_Get_All = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -19,7 +19,7 @@ exports.Tag_Get_All = async function (req: Request, res: Response) {
 
 // Odczytanie tagu
 exports.Tag_Get = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -32,7 +32,7 @@ exports.Tag_Get = async function (req: Request, res: Response) {
 
 // Utworzenie tagu
 exports.Tag_Post = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -55,7 +55,7 @@ exports.Tag_Post = async function (req: Request, res: Response) {
 
 // Modyfikacja tagu
 exports.Tag_Put = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -77,7 +77,7 @@ exports.Tag_Put = async function (req: Request, res: Response) {
 
 // Usunięcie tagu
 exports.Tag_Delete = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -86,8 +86,7 @@ exports.Tag_Delete = async function (req: Request, res: Response) {
 	const tags = await database.downloadTags()
 	const index = tags.findIndex(x => x.id == tagId)
 	if (tags[index] != null) {
-		tags.splice(index, 1)
-		await database.saveTags(tags)
+		tags[index].Delete()
 		res.status(204).send('Tag został usunięty.')
 	} else res.status(400).send('Nie odnaleziono tagu z podanym ID.')
 }

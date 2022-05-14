@@ -16,21 +16,24 @@ export function GenerateToken(user: User) {
 	return sign(payload, secret, { expiresIn: '1h' })
 }
 
-export function CheckToken(req: Request): boolean {
+export async function CheckToken(req: Request) {
 	const token = req.headers.authorization?.split(' ')[1]
 	if (!token) return false
 
-	const payload = verify(token, secret) as TokenPayload
-	CheckDatabaseLocation()
-		.downloadUsers()
-		.then(usersData => {
-			const index = usersData?.findIndex(x => x?.id == payload.UserId)
-			const user = usersData[index]
+	try {
+		const payload = verify(token, secret) as TokenPayload
+		await CheckDatabaseLocation()
+			.downloadUsers()
+			.then(usersData => {
+				const index = usersData?.findIndex(x => x?.id == payload.UserId)
+				const user = usersData[index]
 
-			if (user) if (user.login == payload.Login) return true
-			return false
-		})
-	return false
+				if (user) if (user.login == payload.Login) return true
+				else return false
+			})
+	} catch (error) {
+		return false
+	}
 }
 
 export function DownloadPaylod(token: string) {

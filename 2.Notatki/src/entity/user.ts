@@ -21,8 +21,12 @@ export class User {
 			})
 	}
 
-	Save() {
+	public Save() {
 		CheckDatabaseLocation().saveUser(this)
+	}
+
+	public Delete() {
+		CheckDatabaseLocation().deleteUser(this)
 	}
 }
 
@@ -34,28 +38,31 @@ export async function GetUserById(userId: number) {
 	return user
 }
 
-export const UserSchema = new mongoose.Schema(
-	{
-		Login: {
-			type: String,
-			required: true,
-			lowercase: true,
+export const UserModel = mongoose.model(
+	'User',
+	new mongoose.Schema(
+		{
+			Login: {
+				type: String,
+				required: true,
+				lowercase: true,
+			},
+			Password: {
+				type: String,
+				required: true,
+			},
+			Name: {
+				type: String,
+			},
+			Surname: {
+				type: String,
+			},
+			DateOfBirth: {
+				type: Date,
+			},
 		},
-		Password: {
-			type: String,
-			required: true,
-		},
-		Name: {
-			type: String,
-		},
-		Surname: {
-			type: String,
-		},
-		DateOfBirth: {
-			type: Date,
-		},
-	},
-	{
-		timestamps: true,
-	}
+		{
+			timestamps: true,
+		}
+	)
 )

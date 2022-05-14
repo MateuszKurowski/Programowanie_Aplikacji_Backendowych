@@ -7,7 +7,7 @@ const database = CheckDatabaseLocation()
 
 // Odczytanie notatek zalogowanego użytkownika
 exports.Note_Get_By_User = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -21,7 +21,7 @@ exports.Note_Get_By_User = async function (req: Request, res: Response) {
 
 // Odczytanie notatek publicznych zalogowanego użytkownika
 exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -43,7 +43,7 @@ exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 
 // Odczytanie notatek prywatnych zalogowanego użytkownika
 exports.Note_Get_By_User_Private = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -65,7 +65,7 @@ exports.Note_Get_By_User_Private = async function (req: Request, res: Response) 
 
 // Odczytanie notatki
 exports.Note_Get = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -78,7 +78,7 @@ exports.Note_Get = async function (req: Request, res: Response) {
 
 // Utworzenie notatki
 exports.Note_Post = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -109,7 +109,7 @@ exports.Note_Post = async function (req: Request, res: Response) {
 
 // Modyfikacja notatki
 exports.Note_Put = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -160,7 +160,7 @@ exports.Note_Put = async function (req: Request, res: Response) {
 
 // Usunięcie notatki
 exports.Note_Delete = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -173,15 +173,14 @@ exports.Note_Delete = async function (req: Request, res: Response) {
 	}
 	const notes = await GetNotes()
 	const index = notes?.findIndex(x => x.id == note?.id)
-	notes.splice(index, 1)
-	await database.saveNotes(notes)
+	notes[index].Delete()
 	res.status(204).send('Notatka została usunięta.')
 }
 
 //#region Admin
 // Odczytanie listy wszystkich notatek
 exports.Note_Get_All = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -193,7 +192,7 @@ exports.Note_Get_All = async function (req: Request, res: Response) {
 
 // Odczytanie listy notatek podanego użytkownika
 exports.Note_Get_By_User_ID = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}

@@ -16,8 +16,9 @@ exports.User_Login = async function (req: Request, res: Response) {
 	const users = await database.downloadUsers()
 	const index = users.findIndex(x => x.login == login && x.password == password)
 
-	if (!index || index < 0) res.status(401).send('Nieprawidłowe dane logowania.')
-	else {
+	if (index == null || index < 0) {
+		res.status(401).send('Nieprawidłowe dane logowania.')
+	} else {
 		const token = GenerateToken(users[index])
 		res.status(200).send(token)
 	}
@@ -25,7 +26,7 @@ exports.User_Login = async function (req: Request, res: Response) {
 
 // Odczytanie użytkownika
 exports.User_Get = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -66,11 +67,10 @@ exports.User_Post = async function (req: Request, res: Response) {
 
 // Modyfikacja użytkownika
 exports.User_Put = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
-
 	const token = req.headers.authorization?.split(' ')[1]
 	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(usersData => {
@@ -87,16 +87,16 @@ exports.User_Put = async function (req: Request, res: Response) {
 			const surname = req.body.surname
 			if (surname) user.surname = surname
 			const dateOfBirth = req.body.dateOfBirth
-			if (dateOfBirth) user.dateOfBirth = dateOfBirth
-			database.saveUser(user)
-			res.status(201).send(user)
+			if (dateOfBirth) user.dateOfBirth = new Date(dateOfBirth)
+			database.updateUser(user)
+			res.status(203).send(user)
 		}
 	})
 }
 
 // Usunięcie użytkownika
 exports.User_Delete = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -105,16 +105,22 @@ exports.User_Delete = async function (req: Request, res: Response) {
 	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(usersData => {
 		const index = usersData.findIndex(x => x.id == userId)
-		usersData.splice(index, 1)
-		database.saveUsers(usersData)
-		res.status(200)
+		if (index > -1)
+		{
+			database.deleteUser(usersData[index])
+			res.status(200).send('Żegnam')
+		}
+		else {
+			res.status(404).send('Nie odnaleziono użytkownika.')
+			return
+		}
 	})
 }
 
 //#region Admin
 // Odczytanie listy użytkowników
 exports.User_Get_All = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -125,7 +131,7 @@ exports.User_Get_All = async function (req: Request, res: Response) {
 
 // Odczytanie użytkownika po ID
 exports.User_Get_By_Id = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -139,7 +145,7 @@ exports.User_Get_By_Id = async function (req: Request, res: Response) {
 
 // Edycja użytkownika po ID
 exports.User_Put_By_Id = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -166,7 +172,7 @@ exports.User_Put_By_Id = async function (req: Request, res: Response) {
 
 // Usuwanie użytkownika po ID
 exports.User_Delete_By_Id = async function (req: Request, res: Response) {
-	if (!CheckToken(req)) {
+	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Podano błędny token!')
 		return
 	}
@@ -176,8 +182,7 @@ exports.User_Delete_By_Id = async function (req: Request, res: Response) {
 	const index = users.findIndex(x => x.id == id)
 	if (index == null || index < 0) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 	else {
-		users.splice(index, 1)
-		database.saveUsers(users)
+		users[index].Delete()
 		res.status(200)
 	}
 }

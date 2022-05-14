@@ -5,16 +5,19 @@ import { FilesDatabase } from '../utility/FilesDatabase'
 import { SQLDatabase } from '../utility/SQLDatabase'
 
 export interface DataStorage {
-	saveNote(notes: Note): any
-	saveNotes(notes: Note[]): any
+	saveNote(note: Note): any
+	deleteNote(note: Note): any
+	updateNote(note: Note): any
 	downloadNotes(): Promise<Note[]>
 
-	saveUser(users: User): any
-	saveUsers(users: User[]): any
+	saveUser(user: User): any
+	deleteUser(user: User): any
+	updateUser(user: User): any
 	downloadUsers(): Promise<User[]>
 
-	saveTag(tags: Tag): any
-	saveTags(tags: Tag[]): any
+	saveTag(tag: Tag): any
+	deleteTag(tag: Tag): any
+	updateTag(tag: Tag): any
 	downloadTags(): Promise<Tag[]>
 }
 

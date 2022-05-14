@@ -19,6 +19,9 @@ export class Note {
 	Save() {
 		CheckDatabaseLocation().saveNote(this)
 	}
+	Delete() {
+		CheckDatabaseLocation().deleteNote(this)
+	}
 }
 
 export async function GetNoteById(noteId: number) {
@@ -39,30 +42,31 @@ export async function GetNotesByUserId(userId: number) {
 	return userNotes
 }
 
-export async function GetNotes()
-{
+export async function GetNotes() {
 	return await CheckDatabaseLocation().downloadNotes()
 }
-
-export const NoteSchema = new mongoose.Schema(
-	{
-		Title: {
-			type: String,
-			required: true,
+export const NoteModel = mongoose.model(
+	'Notes',
+	new mongoose.Schema(
+		{
+			Title: {
+				type: String,
+				required: true,
+			},
+			Content: String,
+			OwnerId: {
+				type: ObjectId,
+				required: true,
+			},
+			Tags: [ObjectId],
+			IsPublic: {
+				type: Boolean,
+				required: true,
+				default: false,
+			},
 		},
-		Content: String,
-		OwnerId: {
-			type: ObjectId,
-			required: true,
-		},
-		Tags: [ObjectId],
-		IsPublic: {
-			type: Boolean,
-			required: true,
-			default: false,
-		},
-	},
-	{
-		timestamps: true,
-	}
+		{
+			timestamps: true,
+		}
+	)
 )

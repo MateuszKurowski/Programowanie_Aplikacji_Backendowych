@@ -1,5 +1,4 @@
 import { CheckDatabaseLocation } from '../interfaces/database'
-import { ObjectId } from 'mongodb'
 import mongoose from 'mongoose'
 
 export class Tag {
@@ -15,6 +14,10 @@ export class Tag {
 
 	Save() {
 		CheckDatabaseLocation().saveTag(this)
+	}
+
+	Delete() {
+		CheckDatabaseLocation().deleteTag(this)
 	}
 }
 
@@ -37,16 +40,19 @@ export async function GetTagById(tagId: number) {
 	return tag
 }
 
-export const tagSchema = new mongoose.Schema(
-	{
-		name: {
-			type: String,
-			required: true,
-			unique: true,
-			uppercase: true
+export const TagModel = mongoose.model(
+	'Tag',
+	new mongoose.Schema(
+		{
+			name: {
+				type: String,
+				required: true,
+				unique: true,
+				uppercase: true,
+			},
+		},
+		{
+			timestamps: true,
 		}
-	},
-	{
-		timestamps: true,
-	}
+	)
 )
