@@ -15,13 +15,6 @@ export class Note {
 		public Tags?: Tag[],
 		public IsPublic: Boolean = false
 	) {}
-
-	Save() {
-		CheckDatabaseLocation().saveNote(this)
-	}
-	Delete() {
-		CheckDatabaseLocation().deleteNote(this)
-	}
 }
 
 export async function GetNoteById(noteId: number) {

@@ -27,7 +27,7 @@ exports.User_Login = async function (req: Request, res: Response) {
 // Odczytanie użytkownika
 exports.User_Get = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -56,7 +56,7 @@ exports.User_Post = async function (req: Request, res: Response) {
 		if (surname) user.surname = surname
 		const dateOfBirth = req.body.dateOfBirth
 		if (dateOfBirth) user.dateOfBirth = dateOfBirth
-		database.saveUser(user)
+		await database.saveUser(user)
 		res.status(201).send('Użytkownik  ' + user.login + ' został utworzony. ID: ' + user.id)
 	} catch (error) {
 		if (error == 'Użytkownik z podanym loginem już istnieje!') res.status(409).send(error)
@@ -68,12 +68,12 @@ exports.User_Post = async function (req: Request, res: Response) {
 // Modyfikacja użytkownika
 exports.User_Put = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 	const token = req.headers.authorization?.split(' ')[1]
 	const userId = DownloadPaylod(token!)
-	await database.downloadUsers().then(usersData => {
+	await database.downloadUsers().then(async usersData => {
 		const user = usersData.find(x => x.id == userId)
 
 		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
@@ -88,8 +88,8 @@ exports.User_Put = async function (req: Request, res: Response) {
 			if (surname) user.surname = surname
 			const dateOfBirth = req.body.dateOfBirth
 			if (dateOfBirth) user.dateOfBirth = new Date(dateOfBirth)
-			database.updateUser(user)
-			res.status(203).send(user)
+			await database.updateUser(user)
+			res.status(200).send(user)
 		}
 	})
 }
@@ -97,20 +97,18 @@ exports.User_Put = async function (req: Request, res: Response) {
 // Usunięcie użytkownika
 exports.User_Delete = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const token = req.headers.authorization?.split(' ')[1]
 	const userId = DownloadPaylod(token!)
-	await database.downloadUsers().then(usersData => {
+	await database.downloadUsers().then(async usersData => {
 		const index = usersData.findIndex(x => x.id == userId)
-		if (index > -1)
-		{
-			database.deleteUser(usersData[index])
+		if (index > -1) {
+			await database.deleteUser(usersData[index])
 			res.status(200).send('Żegnam')
-		}
-		else {
+		} else {
 			res.status(404).send('Nie odnaleziono użytkownika.')
 			return
 		}
@@ -121,18 +119,19 @@ exports.User_Delete = async function (req: Request, res: Response) {
 // Odczytanie listy użytkowników
 exports.User_Get_All = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
-	const users = database.downloadUsers()
-	res.status(200).send(users)
+	const users = await database.downloadUsers()
+	if (users.length > 0) res.status(200).send(users)
+	else res.status(204).send('Nie ma żadnych użytkowników.')
 }
 
 // Odczytanie użytkownika po ID
 exports.User_Get_By_Id = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -146,7 +145,7 @@ exports.User_Get_By_Id = async function (req: Request, res: Response) {
 // Edycja użytkownika po ID
 exports.User_Put_By_Id = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -165,15 +164,15 @@ exports.User_Put_By_Id = async function (req: Request, res: Response) {
 		if (surname) user.surname = surname
 		const dateOfBirth = req.body.dateOfBirth
 		if (dateOfBirth) user.dateOfBirth = dateOfBirth
-		database.saveUser(user)
-		res.status(201).send(user)
+		await database.saveUser(user)
+		res.status(200).send(user)
 	}
 }
 
 // Usuwanie użytkownika po ID
 exports.User_Delete_By_Id = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -182,7 +181,7 @@ exports.User_Delete_By_Id = async function (req: Request, res: Response) {
 	const index = users.findIndex(x => x.id == id)
 	if (index == null || index < 0) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 	else {
-		users[index].Delete()
+		await database.deleteUser(users[index])
 		res.status(200)
 	}
 }

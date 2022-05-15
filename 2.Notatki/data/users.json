@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "login": "TestowyUzytkownik",
+    "password": "test123",
+    "name": "Imie",
+    "surname": "Nazwisko",
+    "createDate": "2022-05-15T20:47:09.764Z",
+    "id": 1652647629764
+  }
+]

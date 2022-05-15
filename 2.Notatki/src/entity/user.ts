@@ -20,14 +20,6 @@ export class User {
 					throw new Error('Użytkownik z podanym loginem już istnieje!')
 			})
 	}
-
-	public Save() {
-		CheckDatabaseLocation().saveUser(this)
-	}
-
-	public Delete() {
-		CheckDatabaseLocation().deleteUser(this)
-	}
 }
 
 export async function GetUserById(userId: number) {

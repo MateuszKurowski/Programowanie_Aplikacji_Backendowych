@@ -11,14 +11,6 @@ export class Tag {
 					throw new Error('Podany tag już istnieje')
 			})
 	}
-
-	Save() {
-		CheckDatabaseLocation().saveTag(this)
-	}
-
-	Delete() {
-		CheckDatabaseLocation().deleteTag(this)
-	}
 }
 
 export async function IsTagExist(tagName: string) {
@@ -27,7 +19,7 @@ export async function IsTagExist(tagName: string) {
 	const existingTag = tags.find(x => x.name.toLowerCase() == tagName.toLowerCase().trim())
 	if (!existingTag) {
 		const tag = new Tag(tagName.trim())
-		tag.Save()
+		await CheckDatabaseLocation().saveTag(tag)
 		return tag
 	} else return existingTag
 }

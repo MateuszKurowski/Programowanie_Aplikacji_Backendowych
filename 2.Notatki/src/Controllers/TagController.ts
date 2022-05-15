@@ -7,25 +7,25 @@ const database = CheckDatabaseLocation()
 // Odczytanie listy tagów
 exports.Tag_Get_All = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const tags = await database.downloadTags()
 	if (tags.length > 0) {
 		res.status(200).send(tags)
-	} else res.status(404).send('Nie ma żadnych tagów.')
+	} else res.status(204).send('Nie ma żadnych tagów.')
 }
 
 // Odczytanie tagu
 exports.Tag_Get = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const tagId = parseInt(req.params.id)
-	const tag = GetTagById(tagId)
+	const tag = await GetTagById(tagId)
 	if (!tag) res.status(404).send('Nie odnaleziono tagu z podanym ID.')
 	else res.status(200).send(tag)
 }
@@ -33,7 +33,7 @@ exports.Tag_Get = async function (req: Request, res: Response) {
 // Utworzenie tagu
 exports.Tag_Post = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -56,7 +56,7 @@ exports.Tag_Post = async function (req: Request, res: Response) {
 // Modyfikacja tagu
 exports.Tag_Put = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -71,14 +71,14 @@ exports.Tag_Put = async function (req: Request, res: Response) {
 	if (req.body.name != null) {
 		tag.name = req.body.name
 	}
-	tag.Save()
-	res.status(204).send(tag)
+	await database.updateTag(tag)
+	res.status(200).send(tag)
 }
 
 // Usunięcie tagu
 exports.Tag_Delete = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -86,7 +86,7 @@ exports.Tag_Delete = async function (req: Request, res: Response) {
 	const tags = await database.downloadTags()
 	const index = tags.findIndex(x => x.id == tagId)
 	if (tags[index] != null) {
-		tags[index].Delete()
+		await database.deleteTag(tags[index])
 		res.status(204).send('Tag został usunięty.')
 	} else res.status(400).send('Nie odnaleziono tagu z podanym ID.')
 }

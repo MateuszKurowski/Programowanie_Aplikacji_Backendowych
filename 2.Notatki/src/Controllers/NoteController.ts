@@ -8,7 +8,7 @@ const database = CheckDatabaseLocation()
 // Odczytanie notatek zalogowanego użytkownika
 exports.Note_Get_By_User = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -16,20 +16,20 @@ exports.Note_Get_By_User = async function (req: Request, res: Response) {
 	const userNotes = await GetNotesByUserId(userId)
 
 	if (userNotes && userNotes.length > 0) res.status(200).send(userNotes)
-	else res.status(404).send('Nie posiadasz żadnych notatek.')
+	else res.status(204).send('Nie posiadasz żadnych notatek.')
 }
 
 // Odczytanie notatek publicznych zalogowanego użytkownika
 exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	const userNotes = await GetNotesByUserId(userId)
 	if (!userNotes) {
-		res.status(404).send('Nie posiadasz żadnych publicznych notatek')
+		res.status(204).send('Nie posiadasz żadnych notatek')
 		return
 	}
 
@@ -38,20 +38,20 @@ exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 	})
 
 	if (userNotesPublic && userNotesPublic.length > 0) res.status(200).send(userNotesPublic)
-	else res.status(404).send('Nie posiadasz żadnych publicznych notatek')
+	else res.status(204).send('Nie posiadasz żadnych publicznych notatek')
 }
 
 // Odczytanie notatek prywatnych zalogowanego użytkownika
 exports.Note_Get_By_User_Private = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	const userNotes = await GetNotesByUserId(userId)
 	if (!userNotes) {
-		res.status(404).send('Nie posiadasz żadnych publicznych notatek')
+		res.status(204).send('Nie posiadasz żadnych notatek')
 		return
 	}
 
@@ -60,13 +60,13 @@ exports.Note_Get_By_User_Private = async function (req: Request, res: Response) 
 	})
 
 	if (userNotesPrivate && userNotesPrivate.length > 0) res.status(200).send(userNotesPrivate)
-	else res.status(404).send('Nie posiadasz żadnych prywatnych notatek')
+	else res.status(204).send('Nie posiadasz żadnych prywatnych notatek')
 }
 
 // Odczytanie notatki
 exports.Note_Get = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -79,7 +79,7 @@ exports.Note_Get = async function (req: Request, res: Response) {
 // Utworzenie notatki
 exports.Note_Post = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -102,7 +102,7 @@ exports.Note_Post = async function (req: Request, res: Response) {
 		})
 		note.Tags = noteTags
 	}
-	note.Save()
+	await database.saveNote(note)
 
 	res.status(201).send('Utworzono nową notatkę o ID: ' + note.id)
 }
@@ -110,7 +110,7 @@ exports.Note_Post = async function (req: Request, res: Response) {
 // Modyfikacja notatki
 exports.Note_Put = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -154,14 +154,14 @@ exports.Note_Put = async function (req: Request, res: Response) {
 		}
 	}
 
-	note.Save()
+	await database.saveNote(note)
 	res.status(204).send(note)
 }
 
 // Usunięcie notatki
 exports.Note_Delete = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
@@ -173,7 +173,7 @@ exports.Note_Delete = async function (req: Request, res: Response) {
 	}
 	const notes = await GetNotes()
 	const index = notes?.findIndex(x => x.id == note?.id)
-	notes[index].Delete()
+	await database.deleteNote(notes[index])
 	res.status(204).send('Notatka została usunięta.')
 }
 
@@ -181,25 +181,25 @@ exports.Note_Delete = async function (req: Request, res: Response) {
 // Odczytanie listy wszystkich notatek
 exports.Note_Get_All = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const notes = await GetNotes()
 	if (notes.length > 0) res.status(200).send(notes)
-	else res.status(404).send('Nie ma żadnych notatek.')
+	else res.status(204).send('Nie ma żadnych notatek.')
 }
 
 // Odczytanie listy notatek podanego użytkownika
 exports.Note_Get_By_User_ID = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Podano błędny token!')
+		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
 	}
 
 	const userId = parseInt(req.params.id)
 	const userNotes = await GetNotesByUserId(userId)
 	if (!userNotes) res.status(404).send('Nie odnalzeiono podanego użytkownika.')
-	else if (userNotes.length == 0) res.status(404).send('Podany użytkownik nie posiada notatke.')
+	else if (userNotes.length == 0) res.status(204).send('Podany użytkownik nie posiada notatke.')
 	else res.status(200).send(userNotes)
 }

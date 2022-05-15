@@ -78,7 +78,7 @@ export class FilesDatabase implements DataStorage {
 	}
 	async updateTag(tag: Tag) {
 		const tags = await this.downloadTags()
-		const index = tags.findIndex(x => x.name == tag.name)
+		const index = tags.findIndex(x => x.id == tag.id)
 		tags[index] = tag
 
 		this.writeFile(JSON.stringify(tags, null, 2), this.tagsPath)
