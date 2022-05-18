@@ -1,8 +1,9 @@
 import { CheckDatabaseLocation } from '../interfaces/database'
 import mongoose from 'mongoose'
+import { AnyBulkWriteOperation } from 'mongodb'
 
 export class Tag {
-	public readonly id = Date.now()
+	private _id: number = 0
 	constructor(public name: string) {
 		CheckDatabaseLocation()
 			.downloadTags()
@@ -10,6 +11,14 @@ export class Tag {
 				if (tagsData.findIndex(x => x.name.toLowerCase() == name.toLowerCase()) >= 0)
 					throw new Error('Podany tag już istnieje')
 			})
+	}
+
+	public get Id() {
+		return this._id
+	}
+
+	SetId() {
+		if (this._id == 0) this._id = Date.now()
 	}
 }
 
@@ -27,7 +36,7 @@ export async function IsTagExist(tagName: string) {
 export async function GetTagById(tagId: number) {
 	if (!tagId || tagId == 0) return null
 	const tags = await CheckDatabaseLocation().downloadTags()
-	const tag = tags?.find(x => x.id == tagId)
+	const tag = tags?.find(x => x.Id == tagId)
 	if (!tag) return null
 	return tag
 }

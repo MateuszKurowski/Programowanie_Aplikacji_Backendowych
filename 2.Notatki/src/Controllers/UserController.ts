@@ -1,5 +1,5 @@
 import { Response, Request } from 'express'
-import { User } from '../entity/user'
+import { GetUserById, User } from '../entity/user'
 import { CheckDatabaseLocation } from '../interfaces/database'
 import { CheckToken, DownloadPaylod, GenerateToken } from '../utility/token'
 const database = CheckDatabaseLocation()
@@ -34,7 +34,7 @@ exports.User_Get = async function (req: Request, res: Response) {
 	const token = req.headers.authorization?.split(' ')[1]
 	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(usersData => {
-		const user = usersData.find(x => x.id == userId)
+		const user = usersData.find(x => x.Id == userId)
 		res.status(200).send(user)
 	})
 }
@@ -57,7 +57,7 @@ exports.User_Post = async function (req: Request, res: Response) {
 		const dateOfBirth = req.body.dateOfBirth
 		if (dateOfBirth) user.dateOfBirth = dateOfBirth
 		await database.saveUser(user)
-		res.status(201).send('Użytkownik  ' + user.login + ' został utworzony. ID: ' + user.id)
+		res.status(201).send('Użytkownik  ' + user.login + ' został utworzony. ID: ' + user.Id)
 	} catch (error) {
 		if (error == 'Użytkownik z podanym loginem już istnieje!') res.status(409).send(error)
 		else res.status(500)
@@ -74,7 +74,7 @@ exports.User_Put = async function (req: Request, res: Response) {
 	const token = req.headers.authorization?.split(' ')[1]
 	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(async usersData => {
-		const user = usersData.find(x => x.id == userId)
+		const user = usersData.find(x => x.Id == userId)
 
 		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 		else {
@@ -104,7 +104,7 @@ exports.User_Delete = async function (req: Request, res: Response) {
 	const token = req.headers.authorization?.split(' ')[1]
 	const userId = DownloadPaylod(token!)
 	await database.downloadUsers().then(async usersData => {
-		const index = usersData.findIndex(x => x.id == userId)
+		const index = usersData.findIndex(x => x.Id == userId)
 		if (index > -1) {
 			await database.deleteUser(usersData[index])
 			res.status(200).send('Żegnam')
@@ -123,6 +123,12 @@ exports.User_Get_All = async function (req: Request, res: Response) {
 		return
 	}
 
+	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const admin = await GetUserById(adminId)
+	if (admin?.IsAdmin == false) {
+		res.status(401).send('Nie masz wystarczających uprawnień!')
+	}
+
 	const users = await database.downloadUsers()
 	if (users.length > 0) res.status(200).send(users)
 	else res.status(204).send('Nie ma żadnych użytkowników.')
@@ -135,9 +141,15 @@ exports.User_Get_By_Id = async function (req: Request, res: Response) {
 		return
 	}
 
+	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const admin = await GetUserById(adminId)
+	if (admin?.IsAdmin == false) {
+		res.status(401).send('Nie masz wystarczających uprawnień!')
+	}
+
 	const id = parseInt(req.params.id)
 	const users = await database.downloadUsers()
-	const user = users.find(x => x.id == id)
+	const user = users.find(x => x.Id == id)
 	if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 	else res.status(200).send(user)
 }
@@ -149,9 +161,15 @@ exports.User_Put_By_Id = async function (req: Request, res: Response) {
 		return
 	}
 
+	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const admin = await GetUserById(adminId)
+	if (admin?.IsAdmin == false) {
+		res.status(401).send('Nie masz wystarczających uprawnień!')
+	}
+
 	const id = parseInt(req.params.id)
 	const users = await database.downloadUsers()
-	const user = users.find(x => x.id == id)
+	const user = users.find(x => x.Id == id)
 	if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 	else {
 		const login = req.body.login
@@ -176,13 +194,60 @@ exports.User_Delete_By_Id = async function (req: Request, res: Response) {
 		return
 	}
 
+	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const admin = await GetUserById(adminId)
+	if (admin?.IsAdmin == false) {
+		res.status(401).send('Nie masz wystarczających uprawnień!')
+	}
+
 	const id = parseInt(req.params.id)
 	const users = await database.downloadUsers()
-	const index = users.findIndex(x => x.id == id)
+	const index = users.findIndex(x => x.Id == id)
 	if (index == null || index < 0) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 	else {
 		await database.deleteUser(users[index])
 		res.status(200)
 	}
 }
+
+// Nadanie uprawnień admina
+exports.Add_Admin_Permission = async function (req: Request, res: Response) {
+	if ((await CheckToken(req)) == false) {
+		res.status(401).send('Autoryzacja nie powiodła się!')
+		return
+	}
+	const token = req.headers.authorization?.split(' ')[1]
+	const userId = DownloadPaylod(token!)
+	await database.downloadUsers().then(async usersData => {
+		const user = usersData.find(x => x.Id == userId)
+
+		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
+		else {
+			user.SetAdminPermission()
+			await database.updateUser(user)
+			res.status(200).send('Nadano uprawnienia!')
+		}
+	})
+}
+
+// Nadanie uprawnień admina
+exports.Remove_Admin_Permission = async function (req: Request, res: Response) {
+	if ((await CheckToken(req)) == false) {
+		res.status(401).send('Autoryzacja nie powiodła się!')
+		return
+	}
+	const token = req.headers.authorization?.split(' ')[1]
+	const userId = DownloadPaylod(token!)
+	await database.downloadUsers().then(async usersData => {
+		const user = usersData.find(x => x.Id == userId)
+
+		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
+		else {
+			user.RemoveAdminPermission()
+			await database.updateUser(user)
+			res.status(200).send('Usunięto uprawnienia!')
+		}
+	})
+}
+
 //#endregion

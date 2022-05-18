@@ -11,7 +11,8 @@ type TokenPayload = {
 export function GenerateToken(user: User) {
 	const payload = {
 		Login: user.login,
-		UserId: user.id,
+		UserId: user.Id,
+		IsAdmin: user.IsAdmin,
 	}
 	return sign(payload, secret, { expiresIn: '1h' })
 }
@@ -25,11 +26,12 @@ export async function CheckToken(req: Request) {
 		await CheckDatabaseLocation()
 			.downloadUsers()
 			.then(usersData => {
-				const index = usersData?.findIndex(x => x?.id == payload.UserId)
+				const index = usersData?.findIndex(x => x?.Id == payload.UserId)
 				const user = usersData[index]
 
-				if (user) if (user.login == payload.Login) return true
-				else return false
+				if (user)
+					if (user.login == payload.Login) return true
+					else return false
 			})
 	} catch (error) {
 		return false

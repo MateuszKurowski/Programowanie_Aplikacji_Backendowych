@@ -4,14 +4,15 @@ import mongoose from 'mongoose'
 
 export class User {
 	public readonly createDate = new Date().toISOString()
-	public readonly id = Date.now()
+	private _id = 0
 
 	constructor(
 		public login: string,
 		public password: string,
 		public name?: string,
 		public surname?: string,
-		public dateOfBirth?: Date
+		public dateOfBirth?: Date,
+		private _isAdmin = false
 	) {
 		CheckDatabaseLocation()
 			.downloadUsers()
@@ -20,12 +21,32 @@ export class User {
 					throw new Error('Użytkownik z podanym loginem już istnieje!')
 			})
 	}
+
+	public get Id() {
+		return this._id
+	}
+
+	public SetId() {
+		if (this._id == 0) this._id = Date.now()
+	}
+
+	public get IsAdmin() {
+		return this._isAdmin
+	}
+
+	public SetAdminPermission() {
+		if (this._isAdmin == false) this._isAdmin = true
+	}
+
+	public RemoveAdminPermission() {
+		if (this._isAdmin == true) this._isAdmin = false
+	}
 }
 
 export async function GetUserById(userId: number) {
 	if (!userId || userId == 0) return null
 	const users = await CheckDatabaseLocation().downloadUsers()
-	const user = users?.find(x => x.id == userId)
+	const user = users?.find(x => x.Id == userId)
 	if (!user) return null
 	return user
 }

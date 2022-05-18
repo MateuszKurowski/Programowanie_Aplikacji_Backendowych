@@ -1,6 +1,7 @@
 import { Response, Request } from 'express'
 import { GetNoteById, GetNotes, GetNotesByUserId, Note } from '../entity/note'
 import { IsTagExist, Tag } from '../entity/tag'
+import { GetUserById } from '../entity/user'
 import { CheckDatabaseLocation } from '../interfaces/database'
 import { CheckToken, DownloadPaylod } from '../utility/token'
 const database = CheckDatabaseLocation()
@@ -93,6 +94,24 @@ exports.Note_Post = async function (req: Request, res: Response) {
 	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 
 	const note = new Note(title, content, userId)
+
+	const isPublic = req.body.ispublic
+	if (isPublic) note.IsPublic = isPublic
+
+	const sharedUserIdsFromQuery: string = req.body.sharedUserIds 
+	if (sharedUserIdsFromQuery)
+	{
+		const userIdsTable = sharedUserIdsFromQuery.replace(';', ',').replace(':', ',').replace('.', ',').split(',')
+		const sharedUserIds: number[] = []
+		const users = await database.downloadUsers()
+
+		userIdsTable.forEach(userId => {
+			const user = users.findIndex(x => x.Id == +userId)
+			if (user != null && user > 0) sharedUserIds.push(+userId)
+		});
+		note.SharedUserIds = sharedUserIds.join(',')
+	}
+
 	const sendingTags = req.body.tags?.split(',')
 	let noteTags: Tag[] = []
 	if (sendingTags?.length > 0) {
@@ -104,7 +123,7 @@ exports.Note_Post = async function (req: Request, res: Response) {
 	}
 	await database.saveNote(note)
 
-	res.status(201).send('Utworzono nową notatkę o ID: ' + note.id)
+	res.status(201).send('Utworzono nową notatkę o ID: ' + note.Id)
 }
 
 // Modyfikacja notatki
@@ -127,6 +146,8 @@ exports.Note_Put = async function (req: Request, res: Response) {
 	}
 
 	if (req.body.content != null) note.Content = req.body.content
+
+	if (req.body.isPublic != null) note.IsPublic = req.body.isPublic
 
 	if (req.body.tagsNames != null) {
 		const sendingTags = req.body.tags?.split(',')
@@ -172,7 +193,7 @@ exports.Note_Delete = async function (req: Request, res: Response) {
 		return
 	}
 	const notes = await GetNotes()
-	const index = notes?.findIndex(x => x.id == note?.id)
+	const index = notes?.findIndex(x => x.Id == note?.Id)
 	await database.deleteNote(notes[index])
 	res.status(204).send('Notatka została usunięta.')
 }
@@ -185,6 +206,12 @@ exports.Note_Get_All = async function (req: Request, res: Response) {
 		return
 	}
 
+	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const admin = await GetUserById(adminId)
+	if (admin?.IsAdmin == false) {
+		res.status(401).send('Nie masz wystarczających uprawnień!')
+	}
+
 	const notes = await GetNotes()
 	if (notes.length > 0) res.status(200).send(notes)
 	else res.status(204).send('Nie ma żadnych notatek.')
@@ -195,6 +222,12 @@ exports.Note_Get_By_User_ID = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
 		res.status(401).send('Autoryzacja nie powiodła się!')
 		return
+	}
+
+	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const admin = await GetUserById(adminId)
+	if (admin?.IsAdmin == false) {
+		res.status(401).send('Nie masz wystarczających uprawnień!')
 	}
 
 	const userId = parseInt(req.params.id)

@@ -19,11 +19,11 @@ export class SQLDatabase implements DataStorage {
 	}
 	async deleteNote(note: Note) {
 		const db = await mongoose.connect(connectionString)
-		NoteModel.findByIdAndDelete(new ObjectID(note.id.toString()))
+		NoteModel.findByIdAndDelete(new ObjectID(note.Id.toString()))
 	}
 	async updateNote(note: Note) {
 		const db = await mongoose.connect(connectionString)
-		NoteModel.findByIdAndUpdate(note.id)
+		NoteModel.findByIdAndUpdate(note.Id)
 	}
 	async downloadNotes(): Promise<Note[]> {
 		const db = await mongoose.connect(connectionString)
@@ -41,11 +41,11 @@ export class SQLDatabase implements DataStorage {
 	}
 	async deleteUser(user: User) {
 		const db = await mongoose.connect(connectionString)
-		UserModel.findByIdAndDelete(new ObjectID(user.id.toString()))
+		UserModel.findByIdAndDelete(new ObjectID(user.Id.toString()))
 	}
 	async updateUser(user: User) {
 		const db = await mongoose.connect(connectionString)
-		UserModel.findByIdAndUpdate(user.id)
+		UserModel.findByIdAndUpdate(user.Id)
 	}
 	async downloadUsers(): Promise<User[]> {
 		const db = await mongoose.connect(connectionString)
@@ -59,11 +59,11 @@ export class SQLDatabase implements DataStorage {
 	}
 	async deleteTag(tag: Tag) {
 		const db = await mongoose.connect(connectionString)
-		TagModel.findByIdAndDelete(new ObjectID(tag.id.toString()))
+		TagModel.findByIdAndDelete(new ObjectID(tag.Id.toString()))
 	}
 	async updateTag(tag: Tag) {
 		const db = await mongoose.connect(connectionString)
-		TagModel.findByIdAndUpdate(tag.id)
+		TagModel.findByIdAndUpdate(tag.Id)
 	}
 	async downloadTags(): Promise<Tag[]> {
 		const db = await mongoose.connect(connectionString)

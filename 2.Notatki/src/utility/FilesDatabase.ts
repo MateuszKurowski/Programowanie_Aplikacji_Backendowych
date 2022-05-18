@@ -14,24 +14,25 @@ export class FilesDatabase implements DataStorage {
 	//#region Notes
 	async saveNote(note: Note) {
 		const notes = await this.downloadNotes()
-		const index = notes.findIndex(x => x.id == note.id)
+		note.SetId()
+		const index = notes.findIndex(x => x.Id == note.Id)
 		if (index >= 0) notes[index] = note
 		else notes.push(note)
 		this.writeFile(JSON.stringify(notes, null, 2), this.notesPath)
 	}
 	async updateNote(note: Note) {
 		const notes = await this.downloadNotes()
-		const index = notes.findIndex(x => x.id == note.id)
+		const index = notes.findIndex(x => x.Id == note.Id)
 		notes[index] = note
 
 		this.writeFile(JSON.stringify(notes, null, 2), this.notesPath)
 	}
 	async deleteNote(note: Note) {
 		const notes = await this.downloadNotes()
-		const index = notes.findIndex(x => x.id == note.id)
+		const index = notes.findIndex(x => x.Id == note.Id)
 
 		if (index >= 0) notes.splice(index, 1)
-		else throw new Error('Nie odnaleziono notatki z podanym ID.')
+		else throw new Error('Nie odnaleziono notatki z podanym Id.')
 		this.writeFile(JSON.stringify(notes, null, 2), this.notesPath)
 	}
 	async downloadNotes() {
@@ -44,22 +45,23 @@ export class FilesDatabase implements DataStorage {
 	//#region Users
 	async saveUser(user: User) {
 		const users = await this.downloadUsers()
+		user.SetId()
 		users.push(user)
 		this.writeFile(JSON.stringify(users, null, 2), this.usersPath)
 	}
 	async updateUser(user: User) {
 		const users = await this.downloadUsers()
-		const index = users.findIndex(x => x.id == user.id)
+		const index = users.findIndex(x => x.Id == user.Id)
 		users[index] = user
 
 		this.writeFile(JSON.stringify(users, null, 2), this.usersPath)
 	}
 	async deleteUser(user: User) {
 		const users = await this.downloadUsers()
-		const index = users.findIndex(x => x.id == user.id)
+		const index = users.findIndex(x => x.Id == user.Id)
 
 		if (index >= 0) users.splice(index, 1)
-		else throw new Error('Nie odnaleziono użytkownika z podanym ID')
+		else throw new Error('Nie odnaleziono użytkownika z podanym Id')
 
 		this.writeFile(JSON.stringify(users, null, 2), this.usersPath)
 	}
@@ -73,19 +75,20 @@ export class FilesDatabase implements DataStorage {
 	//#region Tags
 	async saveTag(tag: Tag) {
 		const tags = await this.downloadTags()
+		tag.SetId()
 		tags.push(tag)
 		this.writeFile(JSON.stringify(tags, null, 2), this.tagsPath)
 	}
 	async updateTag(tag: Tag) {
 		const tags = await this.downloadTags()
-		const index = tags.findIndex(x => x.id == tag.id)
+		const index = tags.findIndex(x => x.Id == tag.Id)
 		tags[index] = tag
 
 		this.writeFile(JSON.stringify(tags, null, 2), this.tagsPath)
 	}
 	async deleteTag(tag: Tag) {
 		const tags = await this.downloadTags()
-		const index = tags.findIndex(x => x.id == tag.id)
+		const index = tags.findIndex(x => x.Id == tag.Id)
 
 		if (index >= 0) tags.splice(index, 1)
 		else throw new Error('Nie odnaleziono podanego tagu.')

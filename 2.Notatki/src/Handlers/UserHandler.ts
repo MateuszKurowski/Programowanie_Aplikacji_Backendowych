@@ -8,6 +8,8 @@ routerUser
 	.put('/', User_Controller.User_Put)
 	.delete('/', User_Controller.User_Delete)
 	//Admin
+	.get('/admin/add', User_Controller.Add_Admin_Permission)
+	.get('/admin/remove', User_Controller.Remove_Admin_Permission)
 	.get('/list', User_Controller.User_Get_All)
 	.get('/:id', User_Controller.User_Get_By_Id)
 	.put('/:id', User_Controller.User_Put_By_Id)

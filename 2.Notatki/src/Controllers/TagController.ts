@@ -50,7 +50,7 @@ exports.Tag_Post = async function (req: Request, res: Response) {
 		return
 	}
 
-	res.status(201).send('Utworzono nowy tag o ID: ' + tag.id)
+	res.status(201).send('Utworzono nowy tag o ID: ' + tag.Id)
 }
 
 // Modyfikacja tagu
@@ -84,7 +84,7 @@ exports.Tag_Delete = async function (req: Request, res: Response) {
 
 	const tagId = parseInt(req.params.id)
 	const tags = await database.downloadTags()
-	const index = tags.findIndex(x => x.id == tagId)
+	const index = tags.findIndex(x => x.Id == tagId)
 	if (tags[index] != null) {
 		await database.deleteTag(tags[index])
 		res.status(204).send('Tag został usunięty.')
