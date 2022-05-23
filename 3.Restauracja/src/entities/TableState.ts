@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 export const TableStateModel = mongoose.model(
 	'TableState',
@@ -16,4 +16,8 @@ export const TableStateModel = mongoose.model(
 
 export async function GetTableStates() {
 	return await TableStateModel.find()
+}
+
+export async function GetTableStateById(Id: ObjectId) {
+	return await TableStateModel.findById(Id)
 }
