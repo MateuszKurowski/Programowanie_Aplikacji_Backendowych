@@ -2,7 +2,7 @@ import express from 'express'
 import { ConnectToDatabase } from './utility/ConnectToDatabase'
 import { InitDatabase } from './utility/InitDatabase'
 
-const employeeRoute = require('./Handlers/EmployeeHandler')
+//const employeeRoute = require('./Handlers/EmployeeHandler')
 // const mealCategoryRoute = require('./Handlers/MealCategoryHandler')
 // const mealRoute = require('./Handlers/MealHandler')
 // const orderRoute = require('./Handlers/OrderHandler')
@@ -14,13 +14,13 @@ const employeeRoute = require('./Handlers/EmployeeHandler')
 // const restaurantRoute = require('./Handlers/RestaurantHandler')
 // const tableRoute = require('./Handlers/TableHandler')
 // const tableStateRoute = require('./Handlers/TableStateHandler')
-// const unitRoute = require('./Handlers/UnitHandler')
+//const unitRoute = require('./Handlers/UnitHandler')
 
 const app = express()
 app.use(express.json())
-ConnectToDatabase().then(() => 
-{
-    InitDatabase()
+ConnectToDatabase().then(() => {
+	//InitDatabase()
+	console.log('Koniec inicjalizacji bazy.')
 })
 
 //app.use('/employee', employeeRoute)
@@ -35,6 +35,6 @@ ConnectToDatabase().then(() =>
 // app.use('/restaurant', restaurantRoute)
 // app.use('/table', tableRoute)
 // app.use('/tablestate', tableStateRoute)
-// app.use('/unit', unitRoute)
+//app.use('/unit', unitRoute)
 
 app.listen(3000)

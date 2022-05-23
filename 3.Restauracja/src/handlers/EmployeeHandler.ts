@@ -1,11 +1,11 @@
 const routerEmployee = require('express').Router()
-const Employee_Controller = require('../Controllers/EmployeeController')
+const Employee_Controller = require('../controllers/EmplyoeeController')
 
 routerEmployee
-	.get('/list', Employee_Controller.Employee_Get_All)
+	.get('/login', Employee_Controller.Employee_Login)
 	.post('/', Employee_Controller.Employee_Post)
 	.get('/:id', Employee_Controller.Employee_Get)
-	.put('/:id', Employee_Controller.Employee_Put)
-	.delete('/:id', Employee_Controller.Employee_Delete)
+// .put('/:id', Employee_Controller.Employee_Put)
+// .delete('/:id', Employee_Controller.Employee_Delete)
 
 module.exports = routerEmployee

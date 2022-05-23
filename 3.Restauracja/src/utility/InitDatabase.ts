@@ -1,6 +1,6 @@
 import { MealCategoryModel } from '../entities/MealCategory'
 import { OrderStateModel } from '../entities/OrderState'
-import { PostionModel } from '../entities/Position'
+import { PositionModel } from '../entities/Position'
 import { RestaurantModel } from '../entities/Restaurant'
 import { TableStateModel } from '../entities/TableState'
 import { UnitModel } from '../entities/Unit'
@@ -65,25 +65,25 @@ export function InitDatabase() {
 			WWW: 'www.podblacha.pl',
 		}).save()
 
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Kelner',
 		}).save()
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Kucharz',
 		}).save()
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Kasjer',
 		}).save()
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Sprzątacz',
 		}).save()
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Księgowy',
 		}).save()
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Szef',
 		}).save()
-		await new PostionModel({
+		await new PositionModel({
 			Name: 'Zastępca szefa',
 		}).save()
 	})
