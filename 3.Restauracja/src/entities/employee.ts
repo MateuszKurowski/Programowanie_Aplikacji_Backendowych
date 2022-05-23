@@ -1,4 +1,4 @@
-import mongoose, { mongo } from 'mongoose'
+import mongoose, { mongo, ObjectId } from 'mongoose'
 
 export const EmployeeModel = mongoose.model(
 	'Employee',
@@ -8,6 +8,8 @@ export const EmployeeModel = mongoose.model(
 				type: String,
 				required: true,
 				minlength: 3,
+				lowercase: true,
+				unique: true,
 			},
 			Password: {
 				type: String,
@@ -27,9 +29,21 @@ export const EmployeeModel = mongoose.model(
 			Position: {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Position',
-				required: true,
+				//required: true,
 			},
 		},
 		{ timestamps: true }
 	)
 )
+
+export async function GetEmployees() {
+	return await EmployeeModel.find().populate('Position')
+}
+
+export async function GetEmployeeById(Id: ObjectId) {
+	return await EmployeeModel.findById(Id).populate('Position')
+}
+
+export async function GetEmplyoeeByCredits(login: string, password: string) {
+	return await EmployeeModel.findOne({ Login: login, Password: password }).populate('Position')
+}

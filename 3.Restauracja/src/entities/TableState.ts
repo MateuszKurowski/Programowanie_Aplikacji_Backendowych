@@ -13,3 +13,7 @@ export const TableStateModel = mongoose.model(
 		{ timestamps: false }
 	)
 )
+
+export async function GetTableStates() {
+	return await TableStateModel.find()
+}

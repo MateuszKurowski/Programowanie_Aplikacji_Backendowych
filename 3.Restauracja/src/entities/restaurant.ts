@@ -25,7 +25,7 @@ export const RestaurantModel = mongoose.model(
 			NIP: {
 				type: String,
 				required: true,
-				maxlength: 9,
+				maxlength: 11,
 				validate(value: string) {
 					if (!validateNip(value)) throw new Error('Podano nieprawidłowy numer NIP!')
 				},
