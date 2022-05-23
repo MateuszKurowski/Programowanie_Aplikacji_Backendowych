@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 export const RestaurantModel = mongoose.model(
 	'Restaurant',
@@ -76,4 +76,12 @@ function validateEmail(email: string) {
 		/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
 	return emailRegex.test(email)
+}
+
+export async function GetRestaurants() {
+	return await RestaurantModel.find()
+}
+
+export async function GetRestaurantById(Id: ObjectId) {
+	return await RestaurantModel.findById(Id)
 }
