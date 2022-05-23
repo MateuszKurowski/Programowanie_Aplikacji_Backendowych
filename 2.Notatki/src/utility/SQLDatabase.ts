@@ -58,10 +58,10 @@ export class SQLDatabase implements DataStorage {
 		}).save()
 	}
 	async deleteUser(user: User) {
-		await UserModel.findByIdAndDelete(user.Id)
+		//await UserModel.findByIdAndDelete(user.Id)
 	}
 	async updateUser(user: User) {
-		await UserModel.findByIdAndUpdate(user.Id)
+		await UserModel.updateOne({_id: user.Id}, { $set: { Name: user.name, Surname: user.surname, Login: user.login, Password: user.password, DateOfBirth: user.dateOfBirth, IsAdmin: user.IsAdmin }})
 	}
 	async downloadUsers(): Promise<User[]> {
 		const monogocollection = await UserModel.find()
