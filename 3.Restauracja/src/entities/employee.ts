@@ -8,7 +8,6 @@ export const EmployeeModel = mongoose.model(
 				type: String,
 				required: true,
 				minlength: 3,
-				unique: true,
 			},
 			Password: {
 				type: String,

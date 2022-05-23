@@ -1,41 +1,34 @@
 import express from 'express'
-import { Request, Response } from 'express'
-import mongoose from 'mongoose';
+
+const employeeRoute = require('./Handlers/EmployeeHandler')
+const mealCategoryRoute = require('./Handlers/MealCategoryHandler')
+const mealRoute = require('./Handlers/MealHandler')
+const orderRoute = require('./Handlers/OrderHandler')
+const orderStateRoute = require('./Handlers/OrderStateHandler')
+const positionRoute = require('./Handlers/PositionHandler')
+const productRoute = require('./Handlers/ProductHandler')
+const raportRoute = require('./Handlers/RaportHandler')
+const reservationRoute = require('./Handlers/ReservationHandler')
+const restaurantRoute = require('./Handlers/RestaurantHandler')
+const tableRoute = require('./Handlers/TableHandler')
+const tableStateRoute = require('./Handlers/TableStateHandler')
+const unitRoute = require('./Handlers/UnitHandler')
 
 const app = express()
-
 app.use(express.json())
 
-app.get('/', function (req: Request, res: Response) {
-	const schema = (new mongoose.Schema(
-		{
-			Name: {
-				type: String,
-				required: true,
-				minlength: 3,
-			},
-			Surname: {
-				type: String,
-				required: true,
-				minlength: 3,
-			},
-			Position: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Position',
-				required: true,
-			},
-		},
-		{ timestamps: true }
-	))
-	const model = mongoose.model('model', schema)
-	 
-	const test = new model(
-	{
-		Name: 'Imie',
-		Surname: 'Nazwisko'
-
-	})
-	console.log('Model: ' + test)
-})
+app.use('/employee', employeeRoute)
+app.use('/mealcategory', mealCategoryRoute)
+app.use('/meal', mealRoute)
+app.use('/order', orderRoute)
+app.use('/orderstate', orderStateRoute)
+app.use('/position', positionRoute)
+app.use('/product', productRoute)
+app.use('/raport', raportRoute)
+app.use('/reservation', reservationRoute)
+app.use('/restaurant', restaurantRoute)
+app.use('/table', tableRoute)
+app.use('/tablestate', tableStateRoute)
+app.use('/unit', unitRoute)
 
 app.listen(3000)

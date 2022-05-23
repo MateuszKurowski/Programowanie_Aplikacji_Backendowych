@@ -1,9 +1,7 @@
-import { Jwt, sign, verify } from 'jsonwebtoken'
+import { sign, verify } from 'jsonwebtoken'
 import { Request } from 'express'
-import { EmployeeModel } from '../entities/Employee'
 import { secret } from '../../config.json'
 import { CheckDatabaseLocation } from '../interfaces/database'
-import { json } from 'stream/consumers'
 interface JwtPayload {
 	Id: number
 	login: string
@@ -11,7 +9,6 @@ interface JwtPayload {
 }
 
 export function GenerateToken(employee: any) {
-	const payload = employee
 	return sign({ Id: employee._id, login: employee.login, position: employee.position }, secret, { expiresIn: '24h' })
 }
 
