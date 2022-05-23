@@ -14,7 +14,6 @@ export class FilesDatabase implements DataStorage {
 	//#region Notes
 	async saveNote(note: Note) {
 		const notes = await this.downloadNotes()
-		note.SetId()
 		const index = notes.findIndex(x => x.Id == note.Id)
 		if (index >= 0) notes[index] = note
 		else notes.push(note)
@@ -45,7 +44,6 @@ export class FilesDatabase implements DataStorage {
 	//#region Users
 	async saveUser(user: User) {
 		const users = await this.downloadUsers()
-		user.SetId()
 		users.push(user)
 		this.writeFile(JSON.stringify(users, null, 2), this.usersPath)
 	}
@@ -75,7 +73,6 @@ export class FilesDatabase implements DataStorage {
 	//#region Tags
 	async saveTag(tag: Tag) {
 		const tags = await this.downloadTags()
-		tag.SetId()
 		tags.push(tag)
 		this.writeFile(JSON.stringify(tags, null, 2), this.tagsPath)
 	}

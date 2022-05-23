@@ -1,34 +1,116 @@
 [
 	{
-		"title": "test2",
-		"content": "jakis cos",
-		"createDate": "2022-03-24T00:37:04.225Z",
-		"id": 1648082224225,
-		"tags": [
+		"Title": "Notatka testowa",
+		"Content": "Treść notatki testowej na uczelnie WSEI",
+		"OwnerId": 1653259560181,
+		"Id": 1653259481965,
+		"Tags": [
 			{
-				"id": 1648080280043,
-				"name": "Uczelnia"
+				"name": "Uczelnia",
+				"Id": 1653259234815
 			},
 			{
-				"id": 1648081672718,
-				"name": "WSEI"
+				"name": "wsei",
+				"Id": 1653259234819
 			}
-		]
+		],
+		"IsPublic": false,
+		"SharedUserIds": [],
+		"createDate": "2022-05-22T22:44:41.965Z"
 	},
 	{
-		"title": "test2",
-		"content": "jakis cos",
-		"createDate": "2022-03-24T00:37:04.225Z",
-		"id": 1648082224225,
-		"tags": [
+		"Title": "Notatka testowa publiczna 1",
+		"Content": "Treść notatki testowej na uczelnie WSEI",
+		"OwnerId": 1653259560181,
+		"Id": 1653259676743,
+		"Tags": [
 			{
-				"id": 1648080280043,
-				"name": "Uczelnia"
+				"name": "Uczelnia",
+				"Id": 1653259234815
 			},
 			{
-				"id": 1648081672718,
-				"name": "WSEI"
+				"name": "wsei",
+				"Id": 1653259234819
 			}
-		]
+		],
+		"IsPublic": true,
+		"SharedUserIds": [],
+		"createDate": "2022-05-22T22:47:56.743Z"
+	},
+	{
+		"Title": "Notatka testowa publiczna 2",
+		"Content": "Treść notatki testowej na uczelnie WSEI",
+		"OwnerId": 1653259560181,
+		"Id": 1653259679913,
+		"Tags": [
+			{
+				"name": "Uczelnia",
+				"Id": 1653259234815
+			},
+			{
+				"name": "wsei",
+				"Id": 1653259234819
+			}
+		],
+		"IsPublic": true,
+		"SharedUserIds": [],
+		"createDate": "2022-05-22T22:47:59.913Z"
+	},
+	{
+		"Title": "Notatka testowa prywatna 2",
+		"Content": "Treść notatki testowej na uczelnie WSEI",
+		"OwnerId": 1653259560181,
+		"Id": 1653259686180,
+		"Tags": [
+			{
+				"name": "Uczelnia",
+				"Id": 1653259234815
+			},
+			{
+				"name": "wsei",
+				"Id": 1653259234819
+			}
+		],
+		"IsPublic": false,
+		"SharedUserIds": [],
+		"createDate": "2022-05-22T22:48:06.180Z"
+	},
+	{
+		"Title": "Notatka testowa prywatna 1",
+		"Content": "Treść notatki testowej na uczelnie WSEI",
+		"OwnerId": 1653259560181,
+		"Id": 1653259688541,
+		"Tags": [
+			{
+				"name": "Uczelnia",
+				"Id": 1653259234815
+			},
+			{
+				"name": "wsei",
+				"Id": 1653259234819
+			}
+		],
+		"IsPublic": false,
+		"SharedUserIds": [],
+		"createDate": "2022-05-22T22:48:08.541Z"
+	},
+	{
+		"Title": "Notatka testowa udostepniona",
+		"Content": "Treść notatki testowej na uczelnie WSEI",
+		"OwnerId": 1653259560181,
+		"Id": 1653259715257,
+		"Tags": [
+			{
+				"name": "Uczelnia",
+				"Id": 1653259234815
+			},
+			{
+				"name": "wsei",
+				"Id": 1653259234819
+			}
+		],
+		"IsPublic": false,
+		"SharedUserIds": [1653259580115],
+		"createDate": "2022-05-22T22:48:35.257Z"
 	}
 ]

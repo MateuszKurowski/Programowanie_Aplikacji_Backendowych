@@ -2,7 +2,7 @@ import { Note } from '../entity/note'
 import { User } from '../entity/user'
 import { Tag } from '../entity/tag'
 import { FilesDatabase } from '../utility/FilesDatabase'
-import { SQLDatabase } from '../utility/SQLDatabase'
+import { ConnectSQL, SQLDatabase } from '../utility/SQLDatabase'
 
 export interface DataStorage {
 	saveNote(note: Note): any
@@ -29,5 +29,17 @@ export function CheckDatabaseLocation(): DataStorage {
 		default:
 		case 'files':
 			return new FilesDatabase()
+	}
+}
+
+export async function StartConnection() {
+	const saveData = require('../../config.json').saveData
+	switch (saveData) {
+		case 'database':
+			await ConnectSQL()
+			return true
+		default:
+		case 'files':
+			return false
 	}
 }

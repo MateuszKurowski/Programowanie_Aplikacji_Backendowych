@@ -32,7 +32,7 @@ exports.User_Get = async function (req: Request, res: Response) {
 	}
 
 	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!)
+	const userId = DownloadPaylod(token!).Id
 	await database.downloadUsers().then(usersData => {
 		const user = usersData.find(x => x.Id == userId)
 		res.status(200).send(user)
@@ -57,10 +57,14 @@ exports.User_Post = async function (req: Request, res: Response) {
 		const dateOfBirth = req.body.dateOfBirth
 		if (dateOfBirth) user.dateOfBirth = dateOfBirth
 		await database.saveUser(user)
-		res.status(201).send('Użytkownik  ' + user.login + ' został utworzony. ID: ' + user.Id)
+		res.status(201).send({
+			Message: 'Rejestracja powiodła sie!',
+			User: user,
+		})
 	} catch (error) {
 		if (error == 'Użytkownik z podanym loginem już istnieje!') res.status(409).send(error)
 		else res.status(500)
+		console.log(error)
 		return
 	}
 }
@@ -72,14 +76,14 @@ exports.User_Put = async function (req: Request, res: Response) {
 		return
 	}
 	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!)
+	const userId = DownloadPaylod(token!).Id
 	await database.downloadUsers().then(async usersData => {
 		const user = usersData.find(x => x.Id == userId)
 
 		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 		else {
 			const login = req.body.login
-			if (login) user.login = login
+			if (login) user.login = login.toLowerCase
 			const password = req.body.password
 			if (password) user.password = password
 			const name = req.body.name
@@ -89,7 +93,10 @@ exports.User_Put = async function (req: Request, res: Response) {
 			const dateOfBirth = req.body.dateOfBirth
 			if (dateOfBirth) user.dateOfBirth = new Date(dateOfBirth)
 			await database.updateUser(user)
-			res.status(200).send(user)
+			res.status(200).send({
+				Message: 'Modyfikacja powiodła się!',
+				User: user,
+			})
 		}
 	})
 }
@@ -102,7 +109,7 @@ exports.User_Delete = async function (req: Request, res: Response) {
 	}
 
 	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!)
+	const userId = DownloadPaylod(token!).Id
 	await database.downloadUsers().then(async usersData => {
 		const index = usersData.findIndex(x => x.Id == userId)
 		if (index > -1) {
@@ -123,8 +130,7 @@ exports.User_Get_All = async function (req: Request, res: Response) {
 		return
 	}
 
-	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
-	const admin = await GetUserById(adminId)
+	const admin = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	if (admin?.IsAdmin == false) {
 		res.status(401).send('Nie masz wystarczających uprawnień!')
 	}
@@ -141,8 +147,7 @@ exports.User_Get_By_Id = async function (req: Request, res: Response) {
 		return
 	}
 
-	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
-	const admin = await GetUserById(adminId)
+	const admin = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	if (admin?.IsAdmin == false) {
 		res.status(401).send('Nie masz wystarczających uprawnień!')
 	}
@@ -161,8 +166,7 @@ exports.User_Put_By_Id = async function (req: Request, res: Response) {
 		return
 	}
 
-	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
-	const admin = await GetUserById(adminId)
+	const admin = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	if (admin?.IsAdmin == false) {
 		res.status(401).send('Nie masz wystarczających uprawnień!')
 	}
@@ -183,7 +187,10 @@ exports.User_Put_By_Id = async function (req: Request, res: Response) {
 		const dateOfBirth = req.body.dateOfBirth
 		if (dateOfBirth) user.dateOfBirth = dateOfBirth
 		await database.saveUser(user)
-		res.status(200).send(user)
+		res.status(200).send({
+			Message: 'Użytkownik został zmodyfikowany!',
+			User: user,
+		})
 	}
 }
 
@@ -194,8 +201,7 @@ exports.User_Delete_By_Id = async function (req: Request, res: Response) {
 		return
 	}
 
-	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
-	const admin = await GetUserById(adminId)
+	const admin = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	if (admin?.IsAdmin == false) {
 		res.status(401).send('Nie masz wystarczających uprawnień!')
 	}
@@ -206,7 +212,7 @@ exports.User_Delete_By_Id = async function (req: Request, res: Response) {
 	if (index == null || index < 0) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 	else {
 		await database.deleteUser(users[index])
-		res.status(200)
+		res.status(200).send('Użytkownik został usunięty!')
 	}
 }
 
@@ -217,15 +223,18 @@ exports.Add_Admin_Permission = async function (req: Request, res: Response) {
 		return
 	}
 	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!)
+	const userId = DownloadPaylod(token!).Id
 	await database.downloadUsers().then(async usersData => {
 		const user = usersData.find(x => x.Id == userId)
 
 		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 		else {
-			user.SetAdminPermission()
+			user.IsAdmin = true
 			await database.updateUser(user)
-			res.status(200).send('Nadano uprawnienia!')
+			res.status(200).send({
+				Message: 'Nadano uprawnienia!',
+				User: user,
+			})
 		}
 	})
 }
@@ -237,15 +246,18 @@ exports.Remove_Admin_Permission = async function (req: Request, res: Response) {
 		return
 	}
 	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!)
+	const userId = DownloadPaylod(token!).Id
 	await database.downloadUsers().then(async usersData => {
 		const user = usersData.find(x => x.Id == userId)
 
 		if (user == null) res.status(404).send('Nie odnaleziono użytkownika z podanym ID.')
 		else {
-			user.RemoveAdminPermission()
+			user.IsAdmin = false
 			await database.updateUser(user)
-			res.status(200).send('Usunięto uprawnienia!')
+			res.status(200).send({
+				Message: 'Usunięto uprawnienia!',
+				User: user,
+			})
 		}
 	})
 }

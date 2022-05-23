@@ -5,27 +5,16 @@ import { Tag } from './tag'
 type AccessModifier = 'Public' | 'Private'
 
 export class Note {
-	public readonly createDate = new Date().toISOString()
-	private _id = 0
-
 	constructor(
 		public Title: string,
 		public Content: string,
 		public OwnerId: number,
-		public Tags?: Tag[],
+		public Id = Date.now(),
+		public Tags: Tag[] = [],
 		public IsPublic: Boolean = false,
-		public SharedUserIds: number[] = []
+		public SharedUserIds: number[] = [],
+		public createDate = new Date().toISOString()
 	) {}
-
-	public get Id()
-	{
-		return this._id
-	}
-
-	SetId()
-{
-	if (this._id == 0) this._id = Date.now()
-}
 }
 
 export async function GetNoteById(noteId: number) {
@@ -42,8 +31,20 @@ export async function GetNotesByUserId(userId: number) {
 	const userNotes = notes?.filter(function (Note) {
 		return Note.OwnerId == userId
 	})
-	if (!userNotes) return null
+	if (!userNotes || userNotes.length < 1) return []
 	return userNotes
+}
+
+export async function GetSharedNotesByUserId(userId: number) {
+	if (!userId || userId == 0) return null
+	const notes = await CheckDatabaseLocation().downloadNotes()
+	let sharedNotes: Note[] = []
+	for (const note of notes) {
+		if (note.SharedUserIds.find(x => x == userId)) sharedNotes.push(note)
+	}
+
+	if (!sharedNotes || sharedNotes.length < 1) return null
+	return sharedNotes
 }
 
 export async function GetNotes() {
@@ -53,24 +54,41 @@ export const NoteModel = mongoose.model(
 	'Notes',
 	new mongoose.Schema(
 		{
+			_id: {
+				type: Number,
+			},
 			Title: {
 				type: String,
 				required: true,
 			},
-			Content: String,
+			Content: {
+				type: String,
+				required: false,
+			},
 			OwnerId: {
-				type: ObjectId,
+				type: Number,
 				required: true,
 			},
-			Tags: [ObjectId],
+			Tags: {
+				type: [Number],
+				required: false,
+			},
 			IsPublic: {
 				type: Boolean,
-				required: true,
+				required: false,
 				default: false,
+			},
+			SharedUserIds: {
+				type: [Number],
+				required: false,
+			},
+			CreateDate: {
+				type: Date,
+				required: false,
 			},
 		},
 		{
-			timestamps: true,
+			_id: false,
 		}
 	)
 )

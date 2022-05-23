@@ -5,6 +5,7 @@ routerNote
 	.get('/list', Note_Controller.Note_Get_By_User)
 	.get('/list/public', Note_Controller.Note_Get_By_User_Public)
 	.get('/list/private', Note_Controller.Note_Get_By_User_Private)
+	.get('/list/shared', Note_Controller.Note_Get_By_Shared)
 	.get('/:id', Note_Controller.Note_Get)
 	.post('/', Note_Controller.Note_Post)
 	.put('/:id', Note_Controller.Note_Put)

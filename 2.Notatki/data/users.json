@@ -1,10 +1,11 @@
 [
   {
-    "login": "TestowyUzytkownik",
-    "password": "test123",
-    "name": "Imie",
-    "surname": "Nazwisko",
-    "createDate": "2022-05-15T20:47:09.764Z",
-    "id": 1652647629764
+    "login": "Admin",
+    "password": "Admin",
+    "Id": 1653261122778,
+    "createDate": "2022-05-22T23:12:02.778Z",
+    "IsAdmin": true,
+    "name": "Wojciech",
+    "surname": "Duda"
   }
 ]

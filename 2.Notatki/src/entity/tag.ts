@@ -3,29 +3,22 @@ import mongoose from 'mongoose'
 import { AnyBulkWriteOperation } from 'mongodb'
 
 export class Tag {
-	private _id: number = 0
-	constructor(public name: string) {
-		CheckDatabaseLocation()
-			.downloadTags()
-			.then(tagsData => {
-				if (tagsData.findIndex(x => x.name.toLowerCase() == name.toLowerCase()) >= 0)
-					throw new Error('Podany tag już istnieje')
-			})
-	}
-
-	public get Id() {
-		return this._id
-	}
-
-	SetId() {
-		if (this._id == 0) this._id = Date.now()
+	public name: string
+	constructor(Name: string, public readonly Id: number = Date.now()) {
+		// CheckDatabaseLocation()
+		// 	.downloadTags()
+		// 	.then(tagsData => {
+		// 		if (tagsData.findIndex(x => x.name.toUpperCase() == Name.toUpperCase()) >= 0)
+		// 			throw new Error('Podany tag już istnieje')
+		// 	})
+		this.name = Name.toUpperCase()
 	}
 }
 
 export async function IsTagExist(tagName: string) {
 	if (!tagName) return null
 	const tags = await CheckDatabaseLocation().downloadTags()
-	const existingTag = tags.find(x => x.name.toLowerCase() == tagName.toLowerCase().trim())
+	const existingTag = tags.find(x => x.name.toUpperCase() == tagName.toUpperCase().trim())
 	if (!existingTag) {
 		const tag = new Tag(tagName.trim())
 		await CheckDatabaseLocation().saveTag(tag)
@@ -36,16 +29,33 @@ export async function IsTagExist(tagName: string) {
 export async function GetTagById(tagId: number) {
 	if (!tagId || tagId == 0) return null
 	const tags = await CheckDatabaseLocation().downloadTags()
+
 	const tag = tags?.find(x => x.Id == tagId)
 	if (!tag) return null
 	return tag
+}
+
+export async function GetTagByName(tagName: string) {
+	if (!tagName || tagName.length < 1) return null
+	const tags = await CheckDatabaseLocation().downloadTags()
+
+	const tag = tags?.find(x => x.name.toUpperCase == tagName.toUpperCase)
+	if (!tag) return null
+	return tag
+}
+
+export async function GetTags() {
+	return await CheckDatabaseLocation().downloadTags()
 }
 
 export const TagModel = mongoose.model(
 	'Tag',
 	new mongoose.Schema(
 		{
-			name: {
+			_id: {
+				type: Number,
+			},
+			Name: {
 				type: String,
 				required: true,
 				unique: true,
@@ -53,7 +63,7 @@ export const TagModel = mongoose.model(
 			},
 		},
 		{
-			timestamps: true,
+			_id: false,
 		}
 	)
 )

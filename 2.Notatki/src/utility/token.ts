@@ -3,18 +3,19 @@ import { Request } from 'express'
 import { User } from '../entity/user'
 import { secret } from '../../config.json'
 import { CheckDatabaseLocation } from '../interfaces/database'
+import { json } from 'stream/consumers'
+interface JwtPayload {
+	user: User
+}
 type TokenPayload = {
-	Login: string
 	UserId: number
+	Login: string
+	IsAdmin: boolean
 }
 
 export function GenerateToken(user: User) {
-	const payload = {
-		Login: user.login,
-		UserId: user.Id,
-		IsAdmin: user.IsAdmin,
-	}
-	return sign(payload, secret, { expiresIn: '1h' })
+	const payload = user
+	return sign({ user }, secret, { expiresIn: '24h' })
 }
 
 export async function CheckToken(req: Request) {
@@ -22,15 +23,15 @@ export async function CheckToken(req: Request) {
 	if (!token) return false
 
 	try {
-		const payload = verify(token, secret) as TokenPayload
+		const payload = verify(token, secret) as User
 		await CheckDatabaseLocation()
 			.downloadUsers()
 			.then(usersData => {
-				const index = usersData?.findIndex(x => x?.Id == payload.UserId)
+				const index = usersData?.findIndex(x => x?.Id == payload.Id)
 				const user = usersData[index]
 
 				if (user)
-					if (user.login == payload.Login) return true
+					if (user.login == payload.login) return true
 					else return false
 			})
 	} catch (error) {
@@ -39,6 +40,7 @@ export async function CheckToken(req: Request) {
 }
 
 export function DownloadPaylod(token: string) {
-	const payload = verify(token, secret) as TokenPayload
-	return payload.UserId
+	const payload = verify(token, secret) as JwtPayload
+	const user = payload.user as User
+	return user
 }

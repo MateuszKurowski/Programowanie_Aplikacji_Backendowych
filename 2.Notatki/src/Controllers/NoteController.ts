@@ -1,7 +1,8 @@
 import { Response, Request } from 'express'
-import { GetNoteById, GetNotes, GetNotesByUserId, Note } from '../entity/note'
+import { monitorEventLoopDelay } from 'perf_hooks'
+import { GetNoteById, GetNotes, GetNotesByUserId, GetSharedNotesByUserId, Note } from '../entity/note'
 import { IsTagExist, Tag } from '../entity/tag'
-import { GetUserById } from '../entity/user'
+import { GetUserById, GetUsers } from '../entity/user'
 import { CheckDatabaseLocation } from '../interfaces/database'
 import { CheckToken, DownloadPaylod } from '../utility/token'
 const database = CheckDatabaseLocation()
@@ -13,7 +14,7 @@ exports.Note_Get_By_User = async function (req: Request, res: Response) {
 		return
 	}
 
-	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!).Id
 	const userNotes = await GetNotesByUserId(userId)
 
 	if (userNotes && userNotes.length > 0) res.status(200).send(userNotes)
@@ -27,7 +28,7 @@ exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 		return
 	}
 
-	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!).Id
 	const userNotes = await GetNotesByUserId(userId)
 	if (!userNotes) {
 		res.status(204).send('Nie posiadasz żadnych notatek')
@@ -42,6 +43,24 @@ exports.Note_Get_By_User_Public = async function (req: Request, res: Response) {
 	else res.status(204).send('Nie posiadasz żadnych publicznych notatek')
 }
 
+// Odczytanie notatek publicznych zalogowanego użytkownika
+exports.Note_Get_By_Shared = async function (req: Request, res: Response) {
+	if ((await CheckToken(req)) == false) {
+		res.status(401).send('Autoryzacja nie powiodła się!')
+		return
+	}
+
+	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!).Id
+	const userNotes = await GetSharedNotesByUserId(userId)
+	if (!userNotes) {
+		res.status(204).send('Nie posiadasz żadnych udostępnionych notatek!')
+		return
+	}
+
+	if (userNotes.length > 0) res.status(200).send(userNotes)
+	else res.status(204).send('Nie posiadasz żadnych udostępnionych notatek')
+}
+
 // Odczytanie notatek prywatnych zalogowanego użytkownika
 exports.Note_Get_By_User_Private = async function (req: Request, res: Response) {
 	if ((await CheckToken(req)) == false) {
@@ -49,7 +68,7 @@ exports.Note_Get_By_User_Private = async function (req: Request, res: Response) 
 		return
 	}
 
-	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!).Id
 	const userNotes = await GetNotesByUserId(userId)
 	if (!userNotes) {
 		res.status(204).send('Nie posiadasz żadnych notatek')
@@ -72,7 +91,7 @@ exports.Note_Get = async function (req: Request, res: Response) {
 	}
 
 	const noteId = parseInt(req.params.id)
-	const note = GetNoteById(noteId)
+	const note = await GetNoteById(noteId)
 	if (!note) res.status(404).send('Nie odnaleziono notatki z podanym ID.')
 	else res.status(200).send(note)
 }
@@ -91,39 +110,44 @@ exports.Note_Post = async function (req: Request, res: Response) {
 		return
 	}
 
-	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
+	const userId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!).Id
 
 	const note = new Note(title, content, userId)
 
-	const isPublic = req.body.ispublic
-	if (isPublic) note.IsPublic = isPublic
+	const isPublic = req.body.isPublic
+	if (isPublic) {
+		if (isPublic.toLower().trim() == 'true' || isPublic.trim() == '1') note.IsPublic = true
+		else note.IsPublic = false
+	}
 
-	const sharedUserIdsFromQuery: string = req.body.sharedUserIds 
-	if (sharedUserIdsFromQuery)
-	{
+	const sharedUserIdsFromQuery: string = req.body.sharedUserIds
+	if (sharedUserIdsFromQuery) {
 		const userIdsTable = sharedUserIdsFromQuery.replace(';', ',').replace(':', ',').replace('.', ',').split(',')
 		const sharedUserIds: number[] = []
-		const users = await database.downloadUsers()
+		const users = await GetUsers()
 
-		userIdsTable.forEach(userId => {
+		for (const userId of userIdsTable) {
 			const user = users.findIndex(x => x.Id == +userId)
 			if (user != null && user > 0) sharedUserIds.push(+userId)
-		});
-		note.SharedUserIds = sharedUserIds.join(',')
+		}
+		note.SharedUserIds = sharedUserIds
 	}
 
 	const sendingTags = req.body.tags?.split(',')
-	let noteTags: Tag[] = []
-	if (sendingTags?.length > 0) {
-		sendingTags.forEach(async function (tagName: string) {
+	if (sendingTags && sendingTags?.length > 0) {
+		let noteTags: Tag[] = []
+		for (const tagName of sendingTags) {
 			const tag = await IsTagExist(tagName)
 			if (tag) noteTags.push(tag)
-		})
+		}
 		note.Tags = noteTags
 	}
 	await database.saveNote(note)
 
-	res.status(201).send('Utworzono nową notatkę o ID: ' + note.Id)
+	res.status(201).send({
+		Message: 'Notatka została utworzona!',
+		Note: note,
+	})
 }
 
 // Modyfikacja notatki
@@ -147,36 +171,45 @@ exports.Note_Put = async function (req: Request, res: Response) {
 
 	if (req.body.content != null) note.Content = req.body.content
 
-	if (req.body.isPublic != null) note.IsPublic = req.body.isPublic
+	if (req.body.isPublic != null) {
+		const isPublic = req.body.isPublic
+		if (isPublic) {
+			if (isPublic.toLower().trim() == 'true' || isPublic.trim() == '1') note.IsPublic = true
+			else note.IsPublic = false
+		}
+	}
 
 	if (req.body.tagsNames != null) {
 		const sendingTags = req.body.tags?.split(',')
-		let noteTags: Tag[] = []
+
 		if (sendingTags?.length > 0) {
-			sendingTags.forEach(async function (tagName: string) {
-				const tag = await IsTagExist(tagName)
+			let noteTags: Tag[] = []
+			for (const tagName of sendingTags) {
+				const tag = await IsTagExist(tagName.toUpperCase)
 				if (tag) noteTags.push(tag)
-			})
+			}
 			note.Tags = noteTags
 		}
 	}
 
-	if (req.body.access != null) {
-		const access = req.body.access
-		switch (access.toLower().Trim()) {
-			case 'public':
-				note.IsPublic = true
-				break
-			case 'private':
-				note.IsPublic = false
-				break
-			default:
-				console.log('Nie udało się zmienić dostępności notatki.')
+	const sharedUserIdsFromQuery: string = req.body.sharedUserIds
+	if (sharedUserIdsFromQuery) {
+		const userIdsTable = sharedUserIdsFromQuery.replace(';', ',').replace(':', ',').replace('.', ',').split(',')
+		const sharedUserIds: number[] = []
+		const users = await database.downloadUsers()
+
+		for (const userId of userIdsTable) {
+			const user = users.findIndex(x => x.Id == +userId)
+			if (user != null && user > 0) sharedUserIds.push(+userId)
 		}
+		note.SharedUserIds = sharedUserIds
 	}
 
 	await database.saveNote(note)
-	res.status(204).send(note)
+	res.status(200).send({
+		Message: 'Zmodyfikowano notatkę!',
+		Note: note,
+	})
 }
 
 // Usunięcie notatki
@@ -195,7 +228,7 @@ exports.Note_Delete = async function (req: Request, res: Response) {
 	const notes = await GetNotes()
 	const index = notes?.findIndex(x => x.Id == note?.Id)
 	await database.deleteNote(notes[index])
-	res.status(204).send('Notatka została usunięta.')
+	res.status(200).send('Notatka została usunięta.')
 }
 
 //#region Admin
@@ -206,14 +239,19 @@ exports.Note_Get_All = async function (req: Request, res: Response) {
 		return
 	}
 
-	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
-	const admin = await GetUserById(adminId)
+	const admin = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	if (admin?.IsAdmin == false) {
 		res.status(401).send('Nie masz wystarczających uprawnień!')
+		return
 	}
 
 	const notes = await GetNotes()
-	if (notes.length > 0) res.status(200).send(notes)
+	const result = notes.reduce(function (r, a) {
+		r[a.OwnerId] = r[a.OwnerId] || []
+		r[a.OwnerId].push(a)
+		return r
+	}, Object.create(null))
+	if (notes.length > 0) res.status(200).send(result)
 	else res.status(204).send('Nie ma żadnych notatek.')
 }
 
@@ -224,8 +262,7 @@ exports.Note_Get_By_User_ID = async function (req: Request, res: Response) {
 		return
 	}
 
-	const adminId = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
-	const admin = await GetUserById(adminId)
+	const admin = DownloadPaylod(req.headers.authorization?.split(' ')[1]!)
 	if (admin?.IsAdmin == false) {
 		res.status(401).send('Nie masz wystarczających uprawnień!')
 	}

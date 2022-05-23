@@ -3,70 +3,110 @@ import { Tag, TagModel } from '../entity/tag'
 import { User, UserModel } from '../entity/user'
 import { DataStorage } from '../interfaces/database'
 import { ChangeStreamDocument, MongoClient, ObjectID, ServerApiVersion } from 'mongodb'
-import mongoose from 'mongoose'
+import mongoose, { mongo } from 'mongoose'
 import { connectionString } from '../../config.json'
+import { appendFile } from 'fs'
 
 export class SQLDatabase implements DataStorage {
 	async saveNote(note: Note) {
-		const db = await mongoose.connect(connectionString)
-		const noteMongo = new NoteModel({
+		await new NoteModel({
+			_id: note.Id,
 			Title: note.Title,
 			Content: note.Content,
 			OwnerId: note.OwnerId,
 			Tags: note.Tags,
 			IsPublic: note.IsPublic,
-		}).Save()
+			CreateDate: note.createDate,
+		}).save()
 	}
 	async deleteNote(note: Note) {
-		const db = await mongoose.connect(connectionString)
-		NoteModel.findByIdAndDelete(new ObjectID(note.Id.toString()))
+		await NoteModel.findByIdAndDelete(note.Id)
 	}
 	async updateNote(note: Note) {
-		const db = await mongoose.connect(connectionString)
-		NoteModel.findByIdAndUpdate(note.Id)
+		await NoteModel.findByIdAndUpdate(note.Id)
 	}
 	async downloadNotes(): Promise<Note[]> {
-		const db = await mongoose.connect(connectionString)
-		return NoteModel.find()
+		const monogocollection = await NoteModel.find()
+		let notes: Note[] = []
+		for (const mongo of monogocollection) {
+			notes.push(
+				new Note(
+					mongo.Title,
+					mongo.Content,
+					mongo.OwnerId,
+					mongo._id,
+					mongo.Tags,
+					mongo.IsPublic,
+					mongo.SharedUserIds,
+					mongo.CreateDate
+				)
+			)
+		}
+		return notes
 	}
+
 	async saveUser(user: User) {
-		const db = await mongoose.connect(connectionString)
-		const userMongo = new UserModel({
+		await new UserModel({
+			_id: user.Id,
 			Login: user.login,
 			Password: user.password,
 			Name: user.name,
 			Surname: user.surname,
 			DateOfBirth: user.dateOfBirth,
-		}).Save()
+			IsAdmin: user.IsAdmin,
+			CreateDate: user.createDate,
+		}).save()
 	}
 	async deleteUser(user: User) {
-		const db = await mongoose.connect(connectionString)
-		UserModel.findByIdAndDelete(new ObjectID(user.Id.toString()))
+		await UserModel.findByIdAndDelete(user.Id)
 	}
 	async updateUser(user: User) {
-		const db = await mongoose.connect(connectionString)
-		UserModel.findByIdAndUpdate(user.Id)
+		await UserModel.findByIdAndUpdate(user.Id)
 	}
 	async downloadUsers(): Promise<User[]> {
-		const db = await mongoose.connect(connectionString)
-		return UserModel.find()
+		const monogocollection = await UserModel.find()
+		let users: User[] = []
+		for (const mongo of monogocollection) {
+			users.push(
+				new User(
+					mongo.Login,
+					mongo.Password,
+					mongo._id,
+					mongo.CreateDate,
+					mongo.IsAdmin,
+					mongo.Name,
+					mongo.Surname,
+					mongo.DateOfBirth
+				)
+			)
+		}
+		return users
 	}
 	async saveTag(tag: Tag) {
-		const db = await mongoose.connect(connectionString)
-		const tagMongo = new TagModel({
+		await new TagModel({
+			_id: tag.Id,
 			Name: tag.name,
-		}).Save()
+		}).save()
 	}
 	async deleteTag(tag: Tag) {
-		const db = await mongoose.connect(connectionString)
-		TagModel.findByIdAndDelete(new ObjectID(tag.Id.toString()))
+		await TagModel.findByIdAndDelete(tag.Id)
 	}
 	async updateTag(tag: Tag) {
-		const db = await mongoose.connect(connectionString)
-		TagModel.findByIdAndUpdate(tag.Id)
+		await TagModel.findByIdAndUpdate(tag.Id)
 	}
 	async downloadTags(): Promise<Tag[]> {
-		const db = await mongoose.connect(connectionString)
-		return TagModel.find()
+		const monogocollection = await TagModel.find()
+		let tags: Tag[] = []
+		for (const mongo of monogocollection) {
+			tags.push(new Tag(mongo._id, mongo.Name))
+		}
+		return tags
 	}
+}
+
+export async function ConnectSQL() {
+	await mongoose
+		.connect(connectionString)
+		.then(result => console.log('Otwarto połączenie z bazą!'))
+		.catch(err => console.log(err))
 }
