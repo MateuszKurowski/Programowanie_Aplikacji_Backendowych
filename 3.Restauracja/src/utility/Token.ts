@@ -3,7 +3,7 @@ import { Request } from 'express'
 import { secret } from '../../config.json'
 import { EmployeeModel } from '../entities/Employee'
 import { ObjectId } from 'mongoose'
-import { PostionModel } from '../entities/Position'
+import { PositionModel } from '../entities/Position'
 
 interface JwtPayload {
 	Id: ObjectId
@@ -47,7 +47,7 @@ export async function CheckPermission(req: Request, positions: string[] = []) {
 	const token = req.headers.authorization?.split(' ')[1]
 	const user = DownloadPaylod(token!)
 	if (positions.length == 0) return user
-	const avaiblePositions = await PostionModel.find()
+	const avaiblePositions = await PositionModel.find()
 	for (const positionName of positions) {
 		const positionId = avaiblePositions.find(x => x.Name.toLowerCase().trim() == positionName.toLowerCase().trim())
 		if (user.Id == positionId) {
