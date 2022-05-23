@@ -1,0 +1,7 @@
+{
+	"__comment__": "files/database",
+	"saveData": "database",
+	"secret": "mateuszKurowski",
+	"connectionString": "",
+	"userDatabasePassword": ""
+}

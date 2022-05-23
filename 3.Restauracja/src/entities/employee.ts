@@ -4,6 +4,17 @@ export const EmployeeModel = mongoose.model(
 	'Employee',
 	new mongoose.Schema(
 		{
+			Login: {
+				type: String,
+				required: true,
+				minlength: 3,
+				unique: true,
+			},
+			Password: {
+				type: String,
+				required: true,
+				minlength: 3,
+			},
 			Name: {
 				type: String,
 				required: true,

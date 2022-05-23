@@ -1,15 +1,41 @@
 import express from 'express'
 import { Request, Response } from 'express'
+import mongoose from 'mongoose';
 
 const app = express()
 
 app.use(express.json())
 
-const regex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{3})$/;
-console.log(regex.test('132456789'))
-
 app.get('/', function (req: Request, res: Response) {
-	res.send('GET Hello World')
+	const schema = (new mongoose.Schema(
+		{
+			Name: {
+				type: String,
+				required: true,
+				minlength: 3,
+			},
+			Surname: {
+				type: String,
+				required: true,
+				minlength: 3,
+			},
+			Position: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Position',
+				required: true,
+			},
+		},
+		{ timestamps: true }
+	))
+	const model = mongoose.model('model', schema)
+	 
+	const test = new model(
+	{
+		Name: 'Imie',
+		Surname: 'Nazwisko'
+
+	})
+	console.log('Model: ' + test)
 })
 
 app.listen(3000)
