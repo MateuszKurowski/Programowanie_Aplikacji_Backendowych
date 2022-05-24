@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 export const OrderModel = mongoose.model(
 	'Order',
@@ -33,3 +33,11 @@ export const OrderModel = mongoose.model(
 		{ timestamps: true }
 	)
 )
+
+export async function GetOrders() {
+	return await OrderModel.find()
+}
+
+export async function GetOrderById(Id: ObjectId) {
+	return await OrderModel.findById(Id)
+}
