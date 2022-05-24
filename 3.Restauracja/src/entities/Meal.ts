@@ -1,4 +1,4 @@
-import mongoose, { Mongoose } from 'mongoose'
+import mongoose, { Mongoose, ObjectId } from 'mongoose'
 
 export const MealModel = mongoose.model(
 	'Meal',
@@ -25,6 +25,10 @@ export const MealModel = mongoose.model(
 	)
 )
 
-export class Meal {
-	constructor(public Name: string, public Price: number, public Category: string) {}
+export async function GetMeals() {
+	return await MealModel.find()
+}
+
+export async function GetMealById(Id: ObjectId) {
+	return await MealModel.findById(Id)
 }
