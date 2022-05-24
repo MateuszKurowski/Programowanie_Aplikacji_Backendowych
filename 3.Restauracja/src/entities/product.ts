@@ -19,7 +19,7 @@ export const ProductModel = mongoose.model(
 				min: 0,
 			},
 			Unit: {
-				type: mongoose.Schema.Types.ObjectId,
+				type: [mongoose.Schema.Types.ObjectId],
 				ref: 'Unit',
 				required: true,
 			},

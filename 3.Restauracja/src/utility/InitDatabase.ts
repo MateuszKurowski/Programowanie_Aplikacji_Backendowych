@@ -5,57 +5,88 @@ import { RestaurantModel } from '../entities/Restaurant'
 import { TableStateModel } from '../entities/TableState'
 import { UnitModel } from '../entities/Unit'
 
-export function InitDatabase() {
-	process.on('uncaughtException', async function (exception) {
+export async function InitDatabase() {
+	// process.on('uncaughtException', async () => {})
+	try {
 		await new TableStateModel({
 			Name: 'Wolny',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new TableStateModel({
 			Name: 'Zajety',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new TableStateModel({
 			Name: 'Niedostępny',
 		}).save()
+	} catch (MongoServerError) {}
 
+	try {
 		await new UnitModel({
 			Name: 'Kilogram',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new UnitModel({
 			Name: 'Gram',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new UnitModel({
 			Name: 'Dekogram',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new UnitModel({
 			Name: 'Litr',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new UnitModel({
 			Name: 'Mililitr',
 		}).save()
+	} catch (MongoServerError) {}
 
+	try {
 		await new OrderStateModel({
 			Name: 'W trakcie przygotowania',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new OrderStateModel({
 			Name: 'Przyjęte',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new OrderStateModel({
 			Name: 'Zakończone',
 		}).save()
+	} catch (MongoServerError) {}
 
+	try {
 		await new MealCategoryModel({
 			Name: 'Mięsne',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new MealCategoryModel({
 			Name: 'Wegetariańskie',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new MealCategoryModel({
 			Name: 'Wegańskie',
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new MealCategoryModel({
 			Name: 'Bez glutenu',
 		}).save()
+	} catch (MongoServerError) {}
 
+	try {
 		await new RestaurantModel({
 			Name: 'Pod blachą',
 			Address: 'Krakowsa 32/4',
@@ -64,34 +95,56 @@ export function InitDatabase() {
 			Email: 'testowy.mail@gmail.com',
 			WWW: 'www.podblacha.pl',
 		}).save()
+	} catch (MongoServerError) {}
 
+	try {
 		await new PositionModel({
 			Name: 'Kelner',
 			AccessLevel: 0,
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new PositionModel({
 			Name: 'Kucharz',
 			AccessLevel: 2,
 		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new PositionModel({
+			Name: 'Kucharz',
+			AccessLevel: 2,
+		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new PositionModel({
 			Name: 'Kasjer',
 			AccessLevel: 1,
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new PositionModel({
 			Name: 'Sprzątacz',
 			AccessLevel: 0,
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new PositionModel({
 			Name: 'Księgowy',
 			AccessLevel: 3,
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new PositionModel({
 			Name: 'Szef',
 			AccessLevel: 4,
 		}).save()
+	} catch (MongoServerError) {}
+	try {
 		await new PositionModel({
 			Name: 'Zastępca szefa',
 			AccessLevel: 4,
 		}).save()
-	})
+	} catch (MongoServerError) {}
+
+	console.log('Koniec inicjalizacji bazy.')
 }
