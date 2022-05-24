@@ -1,4 +1,4 @@
-import mongoose, { mongo, ObjectId } from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 import { TableStateModel } from './TableState'
 
 export const TableModel = mongoose.model(

@@ -1,4 +1,4 @@
-import mongoose, { mongo, ObjectId } from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 export const EmployeeModel = mongoose.model(
 	'Employee',
@@ -29,7 +29,7 @@ export const EmployeeModel = mongoose.model(
 			Position: {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Position',
-				//required: true,
+				required: true,
 			},
 		},
 		{ timestamps: true }

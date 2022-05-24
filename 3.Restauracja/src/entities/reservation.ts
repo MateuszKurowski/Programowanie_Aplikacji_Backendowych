@@ -1,5 +1,4 @@
-import { MongoTopologyClosedError } from 'mongodb'
-import mongoose from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 import { TableModel } from './Table'
 
 export const ReservationModel = mongoose.model(
@@ -62,4 +61,12 @@ function validateEmail(email: string) {
 		/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
 	return emailRegex.test(email)
+}
+
+export async function GetReservations() {
+	return await ReservationModel.find()
+}
+
+export async function GetReservationById(Id: ObjectId) {
+	return await ReservationModel.findById(Id)
 }
