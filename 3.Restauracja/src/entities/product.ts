@@ -1,5 +1,4 @@
-import mongoose from 'mongoose'
-import { UnitModel } from './Unit'
+import mongoose, { ObjectId } from 'mongoose'
 
 export const ProductModel = mongoose.model(
 	'Product',
@@ -28,3 +27,11 @@ export const ProductModel = mongoose.model(
 		{ timestamps: false }
 	)
 )
+
+export async function GetProducts() {
+	return await ProductModel.find()
+}
+
+export async function GetProductById(Id: ObjectId) {
+	return await ProductModel.findById(Id)
+}
