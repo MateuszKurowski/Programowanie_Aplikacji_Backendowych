@@ -10,6 +10,11 @@ export const PositionModel = mongoose.model(
 				unique: true,
 				required: true,
 			},
+			AccessLevel: {
+				type: Number,
+				required: true,
+				default: 0,
+			},
 		},
 		{ timestamps: false }
 	)

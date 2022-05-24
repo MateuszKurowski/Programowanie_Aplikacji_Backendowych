@@ -67,24 +67,31 @@ export function InitDatabase() {
 
 		await new PositionModel({
 			Name: 'Kelner',
+			AccessLevel: 0,
 		}).save()
 		await new PositionModel({
 			Name: 'Kucharz',
+			AccessLevel: 2,
 		}).save()
 		await new PositionModel({
 			Name: 'Kasjer',
+			AccessLevel: 1,
 		}).save()
 		await new PositionModel({
 			Name: 'Sprzątacz',
+			AccessLevel: 0,
 		}).save()
 		await new PositionModel({
 			Name: 'Księgowy',
+			AccessLevel: 3,
 		}).save()
 		await new PositionModel({
 			Name: 'Szef',
+			AccessLevel: 4,
 		}).save()
 		await new PositionModel({
 			Name: 'Zastępca szefa',
+			AccessLevel: 4,
 		}).save()
 	})
 }
