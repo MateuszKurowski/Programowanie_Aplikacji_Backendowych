@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 export const MealCategoryModel = mongoose.model(
 	'MealCategory',
@@ -13,3 +13,11 @@ export const MealCategoryModel = mongoose.model(
 		{ timestamps: false }
 	)
 )
+
+export async function GetMealCategories() {
+	return await MealCategoryModel.find()
+}
+
+export async function GetMealCategoryById(Id: ObjectId) {
+	return await MealCategoryModel.findById(Id)
+}
