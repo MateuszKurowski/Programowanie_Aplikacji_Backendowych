@@ -1,9 +1,14 @@
 import mongoose, { ObjectId } from 'mongoose'
 import { EmployeeModel } from './Employee'
 
-export const PositionModel = mongoose.model(
+interface IPosition {
+	Name: string
+	AccessLevel: number
+}
+
+export const PositionModel = mongoose.model<IPosition>(
 	'Position',
-	new mongoose.Schema(
+	new mongoose.Schema<IPosition>(
 		{
 			Name: {
 				type: String,
