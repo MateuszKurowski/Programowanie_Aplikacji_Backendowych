@@ -1,8 +1,16 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-export const OrderModel = mongoose.model(
+interface IOrder {
+	Employee: mongoose.Schema.Types.ObjectId
+	Meal: [mongoose.Schema.Types.ObjectId]
+	OrderState: mongoose.Schema.Types.ObjectId
+	Table: mongoose.Schema.Types.ObjectId
+	Price: number
+}
+
+export const OrderModel = mongoose.model<IOrder>(
 	'Order',
-	new mongoose.Schema(
+	new mongoose.Schema<IOrder>(
 		{
 			Employee: {
 				type: mongoose.Schema.Types.ObjectId,
@@ -10,7 +18,7 @@ export const OrderModel = mongoose.model(
 				required: true,
 			},
 			Meal: {
-				type: mongoose.Schema.Types.ObjectId,
+				type: [mongoose.Schema.Types.ObjectId],
 				ref: 'Meal',
 				required: true,
 			},
@@ -20,7 +28,7 @@ export const OrderModel = mongoose.model(
 				required: true,
 			},
 			Table: {
-				type: [mongoose.Schema.Types.ObjectId],
+				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Table',
 				required: true,
 			},

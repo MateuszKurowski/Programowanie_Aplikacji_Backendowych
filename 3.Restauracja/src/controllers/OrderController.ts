@@ -5,16 +5,18 @@ import { ObjectId } from 'mongoose'
 
 exports.Order_Get_All = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Kelner, Kucharz, Kasjer, Księgowy, Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
+
+	// TODO Sortowanie
 
 	const orders = await GetOrders()
 
@@ -27,20 +29,22 @@ exports.Order_Get_All = async function (req: Request, res: Response) {
 
 exports.Order_Post = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Kasjer, Księgowy, Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
+	// TODO Tworzenie i obliczanie kwoty
+
 	const name = req.body.Name
 	try {
-		const order = await new OrderModel({
+		const order = new OrderModel({
 			Name: name,
 		})
 		await order.save()
@@ -51,21 +55,21 @@ exports.Order_Post = async function (req: Request, res: Response) {
 	} catch (error: any) {
 		res.status(500).send({
 			Message: 'Dodawanie nie powiodło się!',
-			Error: error._message,
+			error: error.message,
 		})
 	}
 }
 
 exports.Order_Get = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Kelner, Kucharz, Kasjer, Księgowy, Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -82,14 +86,14 @@ exports.Order_Get = async function (req: Request, res: Response) {
 
 exports.Order_Put = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Kasjer, Księgowy, Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -100,32 +104,44 @@ exports.Order_Put = async function (req: Request, res: Response) {
 	if (!order) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
-		await OrderModel.updateOne(
-			{ _id: id },
-			{
-				$set: {
-					Name: req.body.Name,
-				},
-			}
-		)
-		order.Name = req.body.Name
-		res.status(200).send({
-			Message: 'Operacja powiodła się.',
-			order: order,
-		})
+		try {
+			await OrderModel.updateOne(
+				{ _id: id },
+				{
+					$set: {
+						Employee: req.body.Employee,
+						Meal: req.body.Meal,
+						OrderState: req.body.OrderState,
+						Table: req.body.Table,
+						Name: req.body.Name,
+					},
+				}
+			)
+			order!.Employee = req.body.Employee
+			order!.Meal = req.body.Meal
+			order!.OrderState = req.body.OrderState
+			order!.Table = req.body.Table
+			order!.Price = req.body.Price
+			res.status(200).send({
+				Message: 'Operacja powiodła się.',
+				order: order,
+			})
+		} catch (error: any) {
+			res.status(400).send(error.message)
+		}
 	}
 }
 
 exports.Order_Delete = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Kasjer, Księgowy, Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -136,7 +152,11 @@ exports.Order_Delete = async function (req: Request, res: Response) {
 	if (!order) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
-		await OrderModel.deleteOne({ _id: id })
-		res.status(200).send('Rekord został usunięty.')
+		try {
+			await OrderModel.deleteOne({ _id: id })
+			res.status(200).send('Rekord został usunięty.')
+		} catch (error: any) {
+			res.status(500).send(error.message)
+		}
 	}
 }
