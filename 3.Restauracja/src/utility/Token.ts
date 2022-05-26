@@ -46,11 +46,12 @@ export async function CheckPermission(req: Request, positions: string[] = []) {
 
 	const token = req.headers.authorization?.split(' ')[1]
 	const user = DownloadPaylod(token!)
+	if (user.login.toLowerCase() == 'admin') return user
 	if (positions.length == 0) return user
 	const avaiblePositions = await PositionModel.find()
 	for (const positionName of positions) {
 		const positionId = avaiblePositions.find(x => x.Name.toLowerCase().trim() == positionName.toLowerCase().trim())
-		if (user.Id == positionId) {
+		if (user!.Id != (positionId!._id as unknown as ObjectId)) {
 			return user
 		}
 	}
