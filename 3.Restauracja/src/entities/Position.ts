@@ -1,7 +1,7 @@
 import mongoose, { ObjectId } from 'mongoose'
 import { EmployeeModel } from './Employee'
 
-interface IPosition {
+export interface IPosition {
 	Name: string
 	AccessLevel: number
 }

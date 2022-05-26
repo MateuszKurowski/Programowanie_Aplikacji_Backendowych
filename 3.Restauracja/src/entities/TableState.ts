@@ -1,5 +1,5 @@
 import mongoose, { ObjectId } from 'mongoose'
-interface ITableState {
+export interface ITableState {
 	Name: string
 }
 

@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-interface IProductNeed {
+export interface IProductNeed {
 	Name: string
 	Quantity: number
 	Unit: mongoose.Schema.Types.ObjectId

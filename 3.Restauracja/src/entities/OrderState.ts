@@ -1,7 +1,7 @@
 import mongoose, { ObjectId } from 'mongoose'
 import { OrderModel } from './Order'
 
-interface IOrderState {
+export interface IOrderState {
 	Name: string
 }
 

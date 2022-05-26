@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-interface IEmployee {
+export interface IEmployee {
 	Login: string
 	Password: string
 	Name: string

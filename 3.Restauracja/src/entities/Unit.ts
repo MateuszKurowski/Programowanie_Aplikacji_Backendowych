@@ -1,5 +1,5 @@
 import mongoose, { ObjectId } from 'mongoose'
-interface IUnit {
+export interface IUnit {
 	Name: string
 }
 

@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-interface IRestaurant {
+export interface IRestaurant {
 	Name: string
 	Address: string
 	TelNumber: string

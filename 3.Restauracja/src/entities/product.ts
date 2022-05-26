@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-interface IProduct {
+export interface IProduct {
 	Name: string
 	Price: number
 	Quantity: number

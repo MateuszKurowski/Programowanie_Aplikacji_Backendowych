@@ -1,7 +1,7 @@
-import mongoose, { Mongoose, ObjectId } from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 import { ReservationModel } from './Reservation'
 
-interface ITable {
+export interface ITable {
 	TableNumber: number
 	SeatsNumber: number
 }

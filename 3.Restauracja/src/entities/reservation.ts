@@ -1,7 +1,7 @@
 import mongoose, { ObjectId } from 'mongoose'
 import { TableModel } from './Table'
 
-interface IReservation {
+export interface IReservation {
 	TableId: mongoose.Schema.Types.ObjectId
 	ClientName: string
 	ClientEmail: string

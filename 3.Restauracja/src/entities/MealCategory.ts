@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-interface IMealCategory {
+export interface IMealCategory {
 	Name: string
 }
 

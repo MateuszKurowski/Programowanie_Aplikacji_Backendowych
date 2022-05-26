@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-interface IOrder {
+export interface IOrder {
 	Employee: mongoose.Schema.Types.ObjectId
 	Meal: [mongoose.Schema.Types.ObjectId]
 	OrderState: mongoose.Schema.Types.ObjectId
