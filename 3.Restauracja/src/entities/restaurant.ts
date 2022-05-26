@@ -94,3 +94,7 @@ export async function GetRestaurants() {
 export async function GetRestaurantById(Id: ObjectId) {
 	return await RestaurantModel.findById(Id)
 }
+
+export async function GetRestaurantInfo() {
+	return await RestaurantModel.findOne({}).select('Name Address TelNumber NIP Email WWW')
+}

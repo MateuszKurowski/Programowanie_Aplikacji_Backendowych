@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import { CheckPermission } from '../utility/Token'
-import { GetRestaurantById, GetRestaurants, RestaurantModel } from '../entities/Restaurant'
+import { GetRestaurantById, GetRestaurantInfo, GetRestaurants, RestaurantModel } from '../entities/Restaurant'
 import { ObjectId } from 'mongoose'
 
 exports.Restaurant_Get_All = async function (req: Request, res: Response) {
@@ -84,6 +84,28 @@ exports.Restaurant_Get = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
 	const id = req.params.id as unknown as ObjectId
 	const restaurant = await GetRestaurantById(id)
+
+	if (!restaurant) {
+		res.status(404).send('Wynik jest pusty.')
+	} else {
+		res.status(200).send(restaurant)
+	}
+}
+
+exports.Restaurant_Main_Get = async function (req: Request, res: Response) {
+	// try {
+	// 	await CheckPermission(req, [''])
+	// } catch (error: any) {
+	// 	if (error.message == 'Autoryzacja nie powiodła się!') {
+	// 		res.status(401).send(error.message)
+	// 		return
+	// 	}
+	// 	if (error.message == 'Brak uprawnień!') {
+	// 		res.status(403).send(error.message)
+	// 	}
+	// }
+
+	const restaurant = await GetRestaurantInfo()
 
 	if (!restaurant) {
 		res.status(404).send('Wynik jest pusty.')
