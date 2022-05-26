@@ -1,6 +1,7 @@
 import { Response, Request } from 'express'
-import { CheckToken, DownloadPaylod, GenerateToken } from '../utility/Token'
+import { CheckPermission, CheckToken, DownloadPaylod, GenerateToken } from '../utility/Token'
 import { EmployeeModel, GetEmplyoeeByCredits, GetEmployeeById, GetEmployees } from '../entities/Employee'
+import { ObjectId } from 'mongoose'
 
 // Logowanie pracownika / generowanie tokenu
 exports.Employee_Login = async function (req: Request, res: Response) {
@@ -21,20 +22,7 @@ exports.Employee_Login = async function (req: Request, res: Response) {
 	}
 }
 
-// Odczytanie pracownika
-exports.Employee_Get = async function (req: Request, res: Response) {
-	if ((await CheckToken(req)) == false) {
-		res.status(401).send('Autoryzacja nie powiodła się!')
-		return
-	}
-
-	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!).Id
-	const user = await GetEmployeeById(userId)
-	if (user) res.status(200).send(user)
-}
-
-// Utworzenie pracownika
+// Rejestracja nowego pracownika
 exports.Employee_Post = async function (req: Request, res: Response) {
 	const login: string = req.body.Login
 	const password: string = req.body.Password
@@ -61,7 +49,213 @@ exports.Employee_Post = async function (req: Request, res: Response) {
 	} catch (error: any) {
 		res.status(400).send({
 			Message: 'Rejestracja nie powiodła sie!',
-			Error: error._message,
+			error: error.message,
 		})
+	}
+}
+// --------------------------------------- //
+
+exports.Employee_Get = async function (req: Request, res: Response) {
+	let user: any
+	try {
+		user = await CheckToken(req)
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+	if (user) res.status(200).send(user)
+	else res.status(500).send('Wystąpił nieoczekiwany błąd. Skontaktuj się z administratorem.')
+}
+
+exports.Unit_Put = async function (req: Request, res: Response) {
+	let user: any
+	try {
+		user = await CheckToken(req)
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+
+	if (!user) {
+		res.status(500).send('Wystąpił nieoczekiwany błąd. Skontaktuj się z administratorem.')
+	} else {
+		try {
+			await EmployeeModel.updateOne(
+				{ _id: user._id },
+				{
+					$set: {
+						Login: req.body.Login,
+						Password: req.body.Password,
+						Name: req.body.Name,
+						Surname: req.body.Surname,
+					},
+				}
+			)
+			user!.Login = req.body.Login
+			user!.Password = req.body.Password
+			user!.Name = req.body.Name
+			user!.Surname = req.body.Surname
+			res.status(200).send({
+				Message: 'Operacja powiodła się.',
+				Employee: user,
+			})
+		} catch (error: any) {
+			res.status(400).send(error.message)
+		}
+	}
+}
+
+exports.Unit_Delete = async function (req: Request, res: Response) {
+	let user: any
+	try {
+		user = await CheckToken(req)
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+
+	if (!user) {
+		res.status(500).send('Wystąpił nieoczekiwany błąd. Skontaktuj się z administratorem.')
+	} else {
+		try {
+			await EmployeeModel.deleteOne({ _id: user._id })
+			res.status(200).send('Żegnam.')
+		} catch (error: any) {
+			res.status(500).send(error.message)
+		}
+	}
+}
+
+// ADMIN ---------------------------- //
+exports.Employee_Get_List_By_Id = async function (req: Request, res: Response) {
+	try {
+		await CheckPermission(req, ['Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+
+	const token = req.headers.authorization?.split(' ')[1]
+	const userId = DownloadPaylod(token!).Id
+	const user = await GetEmployeeById(userId)
+	if (user) res.status(200).send(user)
+	else res.status(404).send('Zapytanie nie zwróciło żadnego wyniku')
+}
+
+exports.Employee_Get_By_Id = async function (req: Request, res: Response) {
+	try {
+		await CheckPermission(req, ['Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+
+	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
+	const id = req.params.id as unknown as ObjectId
+	const employee = await GetEmployeeById(id)
+
+	if (employee) res.status(200).send(employee)
+	else res.status(404).send('Zapytanie nie zwróciło żadnego wyniku')
+}
+
+exports.Employee_Put_By_Id = async function (req: Request, res: Response) {
+	try {
+		await CheckPermission(req, ['Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+
+	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
+	const id = req.params.id as unknown as ObjectId
+	const employee = await GetEmployeeById(id)
+
+	if (!employee) {
+		res.status(404).send('Zapytanie nie zwróciło żadnego wyniku')
+	} else {
+		try {
+			await EmployeeModel.updateOne(
+				{ _id: employee._id },
+				{
+					$set: {
+						Login: req.body.Login,
+						Password: req.body.Password,
+						Name: req.body.Name,
+						Surname: req.body.Surname,
+						Position: req.body.Position,
+					},
+				}
+			)
+			employee!.Login = req.body.Login
+			employee!.Password = req.body.Password
+			employee!.Name = req.body.Name
+			employee!.Surname = req.body.Surname
+			employee!.Position = req.body.Position
+			res.status(200).send({
+				Message: 'Operacja powiodła się.',
+				Employee: employee,
+			})
+		} catch (error: any) {
+			res.status(400).send(error.message)
+		}
+	}
+}
+
+exports.Employee_Delete_By_Id = async function (req: Request, res: Response) {
+	try {
+		await CheckPermission(req, ['Szef, Zastępca szefa'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
+			return
+		}
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
+		}
+	}
+
+	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
+	const id = req.params.id as unknown as ObjectId
+	const employee = await GetEmployeeById(id)
+
+	if (!employee) {
+		res.status(404).send('Zapytanie nie zwróciło żadnego wyniku')
+	} else {
+		try {
+			await EmployeeModel.deleteOne({ _id: employee._id })
+			res.status(200).send('Żegnam.')
+		} catch (error: any) {
+			res.status(500).send(error.message)
+		}
 	}
 }

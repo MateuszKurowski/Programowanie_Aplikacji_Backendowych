@@ -1,8 +1,16 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-export const EmployeeModel = mongoose.model(
+interface IEmployee {
+	Login: string
+	Password: string
+	Name: string
+	Surname: string
+	Position: mongoose.Schema.Types.ObjectId
+}
+
+export const EmployeeModel = mongoose.model<IEmployee>(
 	'Employee',
-	new mongoose.Schema(
+	new mongoose.Schema<IEmployee>(
 		{
 			Login: {
 				type: String,
