@@ -2,6 +2,7 @@ import mongoose, { ObjectId } from 'mongoose'
 import { ReservationModel } from './Reservation'
 
 export interface ITable {
+	_id: ObjectId
 	TableNumber: number
 	SeatsNumber: number
 }
@@ -32,6 +33,10 @@ export async function GetTables() {
 
 export async function GetTablesNumbers() {
 	return await TableModel.find({}, 'TableNumber').exec()
+}
+
+export async function GetTableByNumber(tableNumber: number) {
+	return await TableModel.find({ TableNumber: tableNumber })
 }
 
 export async function GetTableById(Id: ObjectId) {
