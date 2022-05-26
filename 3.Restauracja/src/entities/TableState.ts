@@ -1,18 +1,20 @@
 import mongoose, { ObjectId } from 'mongoose'
+interface ITableState {
+	Name: string
+}
 
-export const TableStateModel = mongoose.model(
-	'TableState',
-	new mongoose.Schema(
-		{
-			Name: {
-				type: String,
-				unique: true,
-				required: true,
-			},
+const schema = new mongoose.Schema(
+	{
+		Name: {
+			type: String,
+			unique: true,
+			required: true,
 		},
-		{ timestamps: false }
-	)
+	},
+	{ timestamps: false }
 )
+
+export const TableStateModel = mongoose.model<ITableState>('TableState', schema)
 
 export async function GetTableStates() {
 	return await TableStateModel.find()
