@@ -1,8 +1,12 @@
 import mongoose, { ObjectId } from 'mongoose'
 
-export const MealCategoryModel = mongoose.model(
+interface IMealCategory {
+	Name: string
+}
+
+export const MealCategoryModel = mongoose.model<IMealCategory>(
 	'MealCategory',
-	new mongoose.Schema(
+	new mongoose.Schema<IMealCategory>(
 		{
 			Name: {
 				type: String,

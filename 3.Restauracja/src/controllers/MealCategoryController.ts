@@ -5,42 +5,56 @@ import { ObjectId } from 'mongoose'
 
 exports.MealCategory_Get_All = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
-	const mealCategorys = await GetMealCategories()
+	let mealCategories: any
+	const sortValue = (req.query.sort as string) ?? 'null'
+	if (sortValue) {
+		switch (sortValue.toLowerCase()) {
+			default:
+			case 'desc':
+				mealCategories = (await GetMealCategories()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				break
+			case 'asc':
+				mealCategories = (await GetMealCategories()).sort()
+				break
+		}
+	} else {
+		mealCategories = await GetMealCategories()
+	}
 
-	if (!mealCategorys) {
+	if (!mealCategories) {
 		res.status(204).send('Tabela jest pusta.')
 	} else {
-		res.status(200).send(mealCategorys)
+		res.status(200).send(mealCategories)
 	}
 }
 
 exports.MealCategory_Post = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
 	const name = req.body.Name
 	try {
-		const mealCategory = await new MealCategoryModel({
+		const mealCategory = new MealCategoryModel({
 			Name: name,
 		})
 		await mealCategory.save()
@@ -49,23 +63,23 @@ exports.MealCategory_Post = async function (req: Request, res: Response) {
 			MealCategory: mealCategory,
 		})
 	} catch (error: any) {
-		res.status(500).send({
+		res.status(400).send({
 			Message: 'Dodawanie nie powiodło się!',
-			Error: error._message,
+			error: error.message,
 		})
 	}
 }
 
 exports.MealCategory_Get = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -82,14 +96,14 @@ exports.MealCategory_Get = async function (req: Request, res: Response) {
 
 exports.MealCategory_Put = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -100,32 +114,36 @@ exports.MealCategory_Put = async function (req: Request, res: Response) {
 	if (!mealCategory) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
-		await MealCategoryModel.updateOne(
-			{ _id: id },
-			{
-				$set: {
-					Name: req.body.Name,
-				},
-			}
-		)
-		mealCategory.Name = req.body.Name
-		res.status(200).send({
-			Message: 'Operacja powiodła się.',
-			MealCategory: mealCategory,
-		})
+		try {
+			await MealCategoryModel.updateOne(
+				{ _id: id },
+				{
+					$set: {
+						Name: req.body.Name,
+					},
+				}
+			)
+			mealCategory.Name = req.body.Name
+			res.status(200).send({
+				Message: 'Operacja powiodła się.',
+				MealCategory: mealCategory,
+			})
+		} catch (error: any) {
+			res.status(200).send(error.message)
+		}
 	}
 }
 
 exports.MealCategory_Delete = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -136,7 +154,11 @@ exports.MealCategory_Delete = async function (req: Request, res: Response) {
 	if (!mealCategory) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
-		await MealCategoryModel.deleteOne({ _id: id })
-		res.status(200).send('Rekord został usunięty.')
+		try {
+			await MealCategoryModel.deleteOne({ _id: id })
+			res.status(200).send('Rekord został usunięty.')
+		} catch (error: any) {
+			res.status(500).send(error.message)
+		}
 	}
 }
