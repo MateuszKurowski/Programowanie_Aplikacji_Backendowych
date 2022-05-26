@@ -1,9 +1,13 @@
 import mongoose, { ObjectId } from 'mongoose'
 import { OrderModel } from './Order'
 
-export const OrderStateModel = mongoose.model(
+interface IOrderState {
+	Name: string
+}
+
+export const OrderStateModel = mongoose.model<IOrderState>(
 	'OrderState',
-	new mongoose.Schema(
+	new mongoose.Schema<IOrderState>(
 		{
 			Name: {
 				type: String,
