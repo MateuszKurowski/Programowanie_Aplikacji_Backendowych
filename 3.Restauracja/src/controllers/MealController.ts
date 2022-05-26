@@ -29,7 +29,9 @@ exports.Meal_Get_All = async function (req: Request, res: Response) {
 						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.Price > two.Price ? -1 : 1))
 						break
 					case 'mealcategory':
-						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.MealCategory > two.MealCategory ? -1 : 1))
+						meals = (await GetMealByCategoryId(category)).sort((one, two) =>
+							one.MealCategory > two.MealCategory ? -1 : 1
+						)
 						break
 					case 'name':
 					default:
@@ -43,7 +45,9 @@ exports.Meal_Get_All = async function (req: Request, res: Response) {
 						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.Price < two.Price ? -1 : 1))
 						break
 					case 'mealcategory':
-						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.MealCategory < two.MealCategory ? -1 : 1))
+						meals = (await GetMealByCategoryId(category)).sort((one, two) =>
+							one.MealCategory < two.MealCategory ? -1 : 1
+						)
 						break
 					case 'name':
 					default:

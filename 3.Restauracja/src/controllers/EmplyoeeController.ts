@@ -253,7 +253,7 @@ exports.Employee_Delete_By_Id = async function (req: Request, res: Response) {
 	} else {
 		try {
 			await EmployeeModel.deleteOne({ _id: employee._id })
-			res.status(200).send('Żegnam.')
+			res.status(200).send('Pracownik został usunięty.')
 		} catch (error: any) {
 			res.status(500).send(error.message)
 		}

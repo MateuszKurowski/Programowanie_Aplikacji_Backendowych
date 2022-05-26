@@ -63,8 +63,8 @@ exports.Reservation_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'clientname':
-						reservations = reservations.sort((one: { clientName: number }, two: { clientName: number }) =>
-							one.clientName > two.clientName ? -1 : 1
+						reservations = reservations.sort((one: { ClientName: string }, two: { ClientName: string }) =>
+							one.ClientName > two.ClientName ? -1 : 1
 						)
 						break
 					case 'startdate':
@@ -78,14 +78,14 @@ exports.Reservation_Get_All = async function (req: Request, res: Response) {
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'clientname':
-						reservations = reservations.sort((one: { clientName: number }, two: { clientName: number }) =>
-							one.clientName < two.clientName ? -1 : 1
+						reservations = reservations.sort((one: { ClientName: string }, two: { ClientName: string }) =>
+							one.ClientName < two.ClientName ? -1 : 1
 						)
 						break
 					case 'startdate':
 					default:
-						reservations = reservations.sort((one: { startDate: Date }, two: { startDate: Date }) =>
-							one.startDate < two.startDate ? -1 : 1
+						reservations = reservations.sort((one: { StartDate: Date }, two: { StartDate: Date }) =>
+							one.StartDate < two.StartDate ? -1 : 1
 						)
 						break
 				}
@@ -130,8 +130,9 @@ exports.Reservation_Get_All_Corfirmed = async function (req: Request, res: Respo
 				break
 		}
 	} else {
-		res.status(400).send('Nieprawidłowe query uri. Obłsuga tylko typu boolean.')
-		return
+		const confirmed = await GetByConfirm(true)
+		const notConfirmed = await GetByConfirm(false)
+		reservations = { Confirmed: confirmed, NotConfirmed: notConfirmed }
 	}
 
 	if (!reservations) {
@@ -222,6 +223,8 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
 	const id = req.params.id as unknown as ObjectId
 	const reservation = await GetReservationById(id)
+	let isConfirmed = req.body.IsConfirmed
+	if (!isConfirmed) isConfirmed = 'false'
 
 	if (!reservation) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
@@ -237,7 +240,7 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 						ClientEmail: req.body.ClientEmail,
 						StartDate: req.body.StartDate,
 						EndDate: req.body.EndDate,
-						IsConfirmed: req.body.IsConfirmed,
+						IsConfirmed: isConfirmed,
 					},
 				}
 			)
@@ -246,7 +249,7 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 			reservation!.ClientEmail = req.body.ClientEmail
 			reservation!.StartDate = req.body.StartDate
 			reservation!.EndDate = req.body.EndDate
-			reservation!.IsConfirmed = req.body.IsConfirmed
+			reservation!.IsConfirmed = isConfirmed
 			res.status(200).send({
 				Message: 'Operacja powiodła się.',
 				Reservation: reservation,

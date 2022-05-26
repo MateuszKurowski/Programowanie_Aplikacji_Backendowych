@@ -7,7 +7,7 @@ import { GetEmployeeById } from '../entities/Employee'
 
 exports.Raport_Get_Orders_Per_Table = async function (req: Request, res: Response) {
 	try {
-		await CheckPermission(req, [''])
+		await CheckPermission(req, ['Szef, Zastępca szefa, Księgowy'])
 	} catch (error: any) {
 		if (error.message == 'Autoryzacja nie powiodła się!') {
 			res.status(401).send(error.message)
@@ -19,6 +19,10 @@ exports.Raport_Get_Orders_Per_Table = async function (req: Request, res: Respons
 	}
 
 	const tableInput = req.query.number
+	if (tableInput) {
+		res.status(400).send('Nieprawidłowe zapytanie.')
+		return
+	}
 	const tableNumber = parseInt(tableInput as string)
 	let orders: any[]
 	if (isNaN(tableNumber)) {
@@ -39,7 +43,7 @@ exports.Raport_Get_Orders_Per_Table = async function (req: Request, res: Respons
 
 exports.Raport_Get_Orders_Per_Employee = async function (req: Request, res: Response) {
 	try {
-		await CheckPermission(req, [''])
+		await CheckPermission(req, ['Szef, Zastępca szefa, Księgowy'])
 	} catch (error: any) {
 		if (error.message == 'Autoryzacja nie powiodła się!') {
 			res.status(401).send(error.message)
@@ -51,6 +55,10 @@ exports.Raport_Get_Orders_Per_Employee = async function (req: Request, res: Resp
 	}
 
 	const employeeInput = req.query.number
+	if (employeeInput) {
+		res.status(400).send('Nieprawidłowe zapytanie.')
+		return
+	}
 
 	const employee = await GetEmployeeById(employeeInput as unknown as ObjectId)
 	if (!employee) {
@@ -65,7 +73,7 @@ exports.Raport_Get_Orders_Per_Employee = async function (req: Request, res: Resp
 
 exports.Raport_Get_Orders_In_Time = async function (req: Request, res: Response) {
 	try {
-		await CheckPermission(req, [''])
+		await CheckPermission(req, ['Szef, Zastępca szefa, Księgowy'])
 	} catch (error: any) {
 		if (error.message == 'Autoryzacja nie powiodła się!') {
 			res.status(401).send(error.message)
@@ -78,6 +86,10 @@ exports.Raport_Get_Orders_In_Time = async function (req: Request, res: Response)
 
 	const startDateString = req.query.startdate as string
 	const endDateString = req.query.enddate as string
+	if (startDateString || endDateString) {
+		res.status(400).send('Nieprawidłowe zapytanie.')
+		return
+	}
 	let startDate: Date
 	let endDate: Date
 	try {
@@ -98,7 +110,7 @@ exports.Raport_Get_Orders_In_Time = async function (req: Request, res: Response)
 
 exports.Raport_Get_Cash_In_Time = async function (req: Request, res: Response) {
 	try {
-		await CheckPermission(req, [''])
+		await CheckPermission(req, ['Szef, Zastępca szefa, Księgowy'])
 	} catch (error: any) {
 		if (error.message == 'Autoryzacja nie powiodła się!') {
 			res.status(401).send(error.message)
@@ -111,6 +123,10 @@ exports.Raport_Get_Cash_In_Time = async function (req: Request, res: Response) {
 
 	const startDateString = req.query.startdate as string
 	const endDateString = req.query.enddate as string
+	if (startDateString || endDateString) {
+		res.status(400).send('Nieprawidłowe zapytanie.')
+		return
+	}
 	let startDate: Date
 	let endDate: Date
 	try {
@@ -126,17 +142,15 @@ exports.Raport_Get_Cash_In_Time = async function (req: Request, res: Response) {
 	const orders = await GetOrderByDate(startDate, endDate)
 
 	let calculatedPrice: number = 0
-	for (const order of orders)
-	{
+	for (const order of orders) {
 		const price = order.Price
 		if (price) calculatedPrice += price
 	}
 
-	if (orders && orders.length > 0) res.status(200).send(
-		{
+	if (orders && orders.length > 0)
+		res.status(200).send({
 			Message: 'Okresowy przychód wyniósł: ' + calculatedPrice,
-			Orders: orders
-		}
-	)
+			Orders: orders,
+		})
 	else res.status(404).send('Zapytanie nie zwróciło żadnego wyniku.')
 }

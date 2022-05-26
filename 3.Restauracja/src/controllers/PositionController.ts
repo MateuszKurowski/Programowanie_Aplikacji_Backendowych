@@ -16,7 +16,21 @@ exports.Position_Get_All = async function (req: Request, res: Response) {
 		}
 	}
 
-	const positions = await GetPositions()
+	let positions: any
+	const sortValue = (req.query.sort as string) ?? 'null'
+	if (sortValue) {
+		switch (sortValue.toLowerCase()) {
+			default:
+			case 'desc':
+				positions = (await GetPositions()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				break
+			case 'asc':
+				positions = (await GetPositions()).sort()
+				break
+		}
+	} else {
+		positions = await GetPositions()
+	}
 
 	if (!positions) {
 		res.status(204).send('Tabela jest pusta.')
@@ -41,7 +55,7 @@ exports.Position_Post = async function (req: Request, res: Response) {
 	const name = req.body.Name
 	const accessLevel = req.body.AccessLevel
 	try {
-		const position = await new PositionModel({
+		const position = new PositionModel({
 			Name: name,
 			AccessLevel: accessLevel,
 		})

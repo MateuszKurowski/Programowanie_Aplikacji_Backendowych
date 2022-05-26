@@ -87,7 +87,7 @@ exports.ProductNeed_Get_All = async function (req: Request, res: Response) {
 
 exports.ProductNeed_Get = async function (req: Request, res: Response) {
 	try {
-		await CheckPermission(req, [''])
+		await CheckPermission(req, ['Kasjer, Kucharz, Szef, Zastępca szefa'])
 	} catch (error: any) {
 		if (error.message == 'Autoryzacja nie powiodła się!') {
 			res.status(401).send(error.message)
