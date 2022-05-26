@@ -1,18 +1,20 @@
 import mongoose, { ObjectId } from 'mongoose'
+interface IUnit {
+	Name: string
+}
 
-export const UnitModel = mongoose.model(
-	'Unit',
-	new mongoose.Schema(
-		{
-			Name: {
-				type: String,
-				unique: true,
-				required: true,
-			},
+const schema = new mongoose.Schema<IUnit>(
+	{
+		Name: {
+			type: String,
+			unique: true,
+			required: true,
 		},
-		{ timestamps: false }
-	)
+	},
+	{ timestamps: false }
 )
+
+export const UnitModel = mongoose.model<IUnit>('Unit', schema)
 
 export async function GetUnits() {
 	return await UnitModel.find()
