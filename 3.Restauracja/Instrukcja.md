@@ -1,3 +1,0 @@
-Instrukcja Endpointów
-
-// TODO
