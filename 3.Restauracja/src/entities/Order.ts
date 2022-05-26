@@ -49,3 +49,32 @@ export async function GetOrders() {
 export async function GetOrderById(Id: ObjectId) {
 	return await OrderModel.findById(Id)
 }
+
+export async function GetOrderByTableId(Id: ObjectId) {
+	return await OrderModel.find({ Table: Id })
+		.populate('Employee')
+		.populate('Meal')
+		.populate('OrderState')
+		.populate('Table')
+		.exec()
+}
+
+export async function GetOrderByEmployeeId(Id: ObjectId) {
+	return await OrderModel.find({ Employee: Id })
+		.populate('Employee')
+		.populate('Meal')
+		.populate('OrderState')
+		.populate('Table')
+		.exec()
+}
+
+export async function GetOrderByDate(startDate: Date, endDate: Date) {
+	return await OrderModel.find({
+		createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
+	})
+		.populate('Employee')
+		.populate('Meal')
+		.populate('OrderState')
+		.populate('Table')
+		.exec()
+}

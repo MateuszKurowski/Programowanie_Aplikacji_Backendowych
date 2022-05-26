@@ -2,6 +2,10 @@ import { Response, Request } from 'express'
 import { CheckPermission } from '../utility/Token'
 import { GetOrders, GetOrderById, OrderModel } from '../entities/Order'
 import { ObjectId } from 'mongoose'
+import { IEmployee } from '../entities/Employee'
+import { ITable } from '../entities/Table'
+import { IOrderState } from '../entities/OrderState'
+import { MealModel } from '../entities/Meal'
 
 exports.Order_Get_All = async function (req: Request, res: Response) {
 	try {
@@ -25,40 +29,46 @@ exports.Order_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'employee':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
-						break
-					case 'meal':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) =>
+							(one.Employee as unknown as IEmployee).Surname > (two.Employee as unknown as IEmployee).Surname ? -1 : 1
+						)
 						break
 					case 'table':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) =>
+							(one.Employee as unknown as ITable).TableNumber > (two.Employee as unknown as ITable).TableNumber ? -1 : 1
+						)
 						break
 					case 'price':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) => (one.Price < two.Price ? -1 : 1))
 						break
 					case 'orderstate':
 					default:
-						orders = (await GetOrders()).sort((one, two) => (one.TableNumber > two.TableNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) =>
+							(one.Employee as unknown as IOrderState).Name > (two.Employee as unknown as IOrderState).Name ? -1 : 1
+						)
 						break
 				}
 				break
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'employee':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
-						break
-					case 'meal':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) =>
+							(one.Employee as unknown as IEmployee).Surname < (two.Employee as unknown as IEmployee).Surname ? -1 : 1
+						)
 						break
 					case 'table':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) =>
+							(one.Employee as unknown as ITable).TableNumber < (two.Employee as unknown as ITable).TableNumber ? -1 : 1
+						)
 						break
 					case 'price':
-						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) => (one.Price < two.Price ? -1 : 1))
 						break
 					case 'orderstate':
 					default:
-						orders = (await GetOrders()).sort((one, two) => (one.TableNumber < two.TableNumber ? -1 : 1))
+						orders = (await GetOrders()).sort((one, two) =>
+							(one.Employee as unknown as IOrderState).Name < (two.Employee as unknown as IOrderState).Name ? -1 : 1
+						)
 						break
 				}
 				break
@@ -87,12 +97,32 @@ exports.Order_Post = async function (req: Request, res: Response) {
 		}
 	}
 
-	// TODO Tworzenie i obliczanie kwoty
+	const employee = req.body.Employee
+	const mealString = req.body.Meal
+	const orderState = req.body.OrderState
+	const table = req.body.Table
+	let price = req.body.Price
+	let calculatedPrice: number = 0
+	let mealArray = []
+	if (mealString) {
+		mealArray = mealString.replace(':', ',').replace(';', ',').replace('.', ',').split(',')
+		for (const mealId of mealArray) {
+			const meal = await MealModel.findById(mealId)
+			if (meal) {
+				const price = parseInt(meal.Price)
+				if (price) calculatedPrice += price
+			}
+		}
+	}
+	if (!price) price = calculatedPrice
 
-	const name = req.body.Name
 	try {
 		const order = new OrderModel({
-			Name: name,
+			Employee: employee,
+			Meal: mealArray,
+			OrderState: orderState,
+			Table: table,
+			Price: price,
 		})
 		await order.save()
 		res.status(201).send({
@@ -102,7 +132,7 @@ exports.Order_Post = async function (req: Request, res: Response) {
 	} catch (error: any) {
 		res.status(500).send({
 			Message: 'Dodawanie nie powiodło się!',
-			error: error.message,
+			Error: error.message,
 		})
 	}
 }
@@ -160,7 +190,7 @@ exports.Order_Put = async function (req: Request, res: Response) {
 						Meal: req.body.Meal,
 						OrderState: req.body.OrderState,
 						Table: req.body.Table,
-						Name: req.body.Name,
+						Price: req.body.Price,
 					},
 				}
 			)
@@ -171,7 +201,7 @@ exports.Order_Put = async function (req: Request, res: Response) {
 			order!.Price = req.body.Price
 			res.status(200).send({
 				Message: 'Operacja powiodła się.',
-				order: order,
+				Order: order,
 			})
 		} catch (error: any) {
 			res.status(400).send(error.message)
