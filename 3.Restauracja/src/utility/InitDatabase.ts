@@ -1,7 +1,9 @@
+import { EmployeeModel } from '../entities/Employee'
 import { MealCategoryModel } from '../entities/MealCategory'
 import { OrderStateModel } from '../entities/OrderState'
 import { PositionModel } from '../entities/Position'
 import { RestaurantModel } from '../entities/Restaurant'
+import { TableModel } from '../entities/Table'
 import { TableStateModel } from '../entities/TableState'
 import { UnitModel } from '../entities/Unit'
 
@@ -14,12 +16,43 @@ export async function InitDatabase() {
 	} catch (MongoServerError) {}
 	try {
 		await new TableStateModel({
-			Name: 'Zajety',
+			Name: 'Zajęty',
 		}).save()
 	} catch (MongoServerError) {}
 	try {
 		await new TableStateModel({
 			Name: 'Niedostępny',
+		}).save()
+	} catch (MongoServerError) {}
+
+	try {
+		await new TableModel({
+			TableNumber: 1,
+			SeatsNumber: 3,
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new TableModel({
+			TableNumber: 2,
+			SeatsNumber: 2,
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new TableModel({
+			TableNumber: 3,
+			SeatsNumber: 4,
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new TableModel({
+			TableNumber: 4,
+			SeatsNumber: 3,
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new TableModel({
+			TableNumber: 5,
+			SeatsNumber: 5,
 		}).save()
 	} catch (MongoServerError) {}
 
@@ -145,6 +178,23 @@ export async function InitDatabase() {
 			AccessLevel: 4,
 		}).save()
 	} catch (MongoServerError) {}
+	try {
+		await new PositionModel({
+			Name: 'Admin',
+			AccessLevel: 99,
+		}).save()
+	} catch (MongoServerError) {}
+
+	try {
+		const adminRole = await PositionModel.findOne({ Name: 'Admin' })
+		await new EmployeeModel({
+			Login: 'admin',
+			Password: 'Admin',
+			Name: 'Admin',
+			Surname: 'Admin',
+			Position: adminRole?._id,
+		}).save()
+	} catch (error) {}
 
 	console.log('Koniec inicjalizacji bazy.')
 }
