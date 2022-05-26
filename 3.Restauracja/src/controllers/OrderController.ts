@@ -16,9 +16,56 @@ exports.Order_Get_All = async function (req: Request, res: Response) {
 		}
 	}
 
-	// TODO Sortowanie
-
-	const orders = await GetOrders()
+	let orders: any
+	const sort = (req.query.sort as string) ?? 'null'
+	const sortBy = (req.query.sortby as string) ?? 'null'
+	if (sort) {
+		switch (sort.toLowerCase()) {
+			default:
+			case 'desc':
+				switch (sortBy.toLowerCase()) {
+					case 'employee':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						break
+					case 'meal':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						break
+					case 'table':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						break
+					case 'price':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						break
+					case 'orderstate':
+					default:
+						orders = (await GetOrders()).sort((one, two) => (one.TableNumber > two.TableNumber ? -1 : 1))
+						break
+				}
+				break
+			case 'asc':
+				switch (sortBy.toLowerCase()) {
+					case 'employee':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						break
+					case 'meal':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						break
+					case 'table':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						break
+					case 'price':
+						orders = (await GetOrders()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						break
+					case 'orderstate':
+					default:
+						orders = (await GetOrders()).sort((one, two) => (one.TableNumber < two.TableNumber ? -1 : 1))
+						break
+				}
+				break
+		}
+	} else {
+		orders = await GetOrders()
+	}
 
 	if (!orders) {
 		res.status(204).send('Tabela jest pusta.')
