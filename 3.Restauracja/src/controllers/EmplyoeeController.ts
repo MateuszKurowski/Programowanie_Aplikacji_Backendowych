@@ -72,7 +72,7 @@ exports.Employee_Get = async function (req: Request, res: Response) {
 	else res.status(500).send('Wystąpił nieoczekiwany błąd. Skontaktuj się z administratorem.')
 }
 
-exports.Unit_Put = async function (req: Request, res: Response) {
+exports.Employee_Put = async function (req: Request, res: Response) {
 	let user: any
 	try {
 		user = await CheckToken(req)
@@ -115,7 +115,7 @@ exports.Unit_Put = async function (req: Request, res: Response) {
 	}
 }
 
-exports.Unit_Delete = async function (req: Request, res: Response) {
+exports.Employee_Delete = async function (req: Request, res: Response) {
 	let user: any
 	try {
 		user = await CheckToken(req)
