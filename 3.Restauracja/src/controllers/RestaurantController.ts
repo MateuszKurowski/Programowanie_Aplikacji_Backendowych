@@ -5,14 +5,14 @@ import { ObjectId } from 'mongoose'
 
 exports.Restaurant_Get_All = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -26,17 +26,17 @@ exports.Restaurant_Get_All = async function (req: Request, res: Response) {
 }
 
 exports.Restaurant_Post = async function (req: Request, res: Response) {
-	res.status(403).send('Dodawanie zostało wyłaczone przez admina.')
-	return
+	// res.status(403).send('Dodawanie zostało wyłaczone przez admina.')
+	// return
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Szef'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -47,7 +47,7 @@ exports.Restaurant_Post = async function (req: Request, res: Response) {
 	const email = req.body.Email
 	const wwww = req.body.WWW
 	try {
-		const restaurant = await new RestaurantModel({
+		const restaurant = new RestaurantModel({
 			Name: name,
 			Address: address,
 			TelNumber: telNumber,
@@ -61,23 +61,23 @@ exports.Restaurant_Post = async function (req: Request, res: Response) {
 			Restaurant: restaurant,
 		})
 	} catch (error: any) {
-		res.status(500).send({
+		res.status(400).send({
 			Message: 'Dodawanie nie powiodło się!',
-			Error: error._message,
+			error: error.message,
 		})
 	}
 }
 
 exports.Restaurant_Get = async function (req: Request, res: Response) {
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, [''])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -93,17 +93,17 @@ exports.Restaurant_Get = async function (req: Request, res: Response) {
 }
 
 exports.Restaurant_Put = async function (req: Request, res: Response) {
-	res.status(403).send('Dodawanie zostało wyłaczone przez admina.')
-	return
+	// res.status(403).send('Modyfikowanie zostało wyłaczone przez admina.')
+	// return
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Szef'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -114,34 +114,48 @@ exports.Restaurant_Put = async function (req: Request, res: Response) {
 	if (!restaurant) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
-		await RestaurantModel.updateOne(
-			{ _id: id },
-			{
-				$set: {
-					Name: req.body.name,
-				},
-			}
-		)
-		restaurant.Name = req.body.name
-		res.status(200).send({
-			Message: 'Operacja powiodła się.',
-			Restaurant: restaurant,
-		})
+		try {
+			await RestaurantModel.updateOne(
+				{ _id: id },
+				{
+					$set: {
+						Name: req.body.Name,
+						Address: req.body.Address,
+						TelNumber: req.body.TelNumber,
+						NIP: req.body.NIP,
+						Email: req.body.Email,
+						WWW: req.body.WWW,
+					},
+				}
+			)
+			restaurant!.Name = req.body.name
+			restaurant!.Address = req.body.Address
+			restaurant!.TelNumber = req.body.TelNumber
+			restaurant!.NIP = req.body.NIP
+			restaurant!.Email = req.body.Email
+			restaurant!.WWW = req.body.WWW
+			res.status(200).send({
+				Message: 'Operacja powiodła się.',
+				Restaurant: restaurant,
+			})
+		} catch (error: any) {
+			res.status(400).send(error.message)
+		}
 	}
 }
 
 exports.Restaurant_Delete = async function (req: Request, res: Response) {
-	res.status(403).send('Dodawanie zostało wyłaczone przez admina.')
-	return
+	// res.status(403).send('Usuwanie zostało wyłaczone przez admina.')
+	// return
 	try {
-		CheckPermission(req, [''])
-	} catch (err: any) {
-		if (err._message == 'Autoryzacja nie powiodła się!') {
-			res.status(401).send(err._message)
+		await CheckPermission(req, ['Szef'])
+	} catch (error: any) {
+		if (error.message == 'Autoryzacja nie powiodła się!') {
+			res.status(401).send(error.message)
 			return
 		}
-		if (err._message == 'Brak uprawnień!') {
-			res.status(403).send(err._message)
+		if (error.message == 'Brak uprawnień!') {
+			res.status(403).send(error.message)
 		}
 	}
 
@@ -152,7 +166,11 @@ exports.Restaurant_Delete = async function (req: Request, res: Response) {
 	if (!restaurant) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
-		await RestaurantModel.deleteOne({ _id: id })
-		res.status(200).send('Rekord został usunięty.')
+		try {
+			await RestaurantModel.deleteOne({ _id: id })
+			res.status(200).send('Rekord został usunięty.')
+		} catch (error: any) {
+			res.status(500).send(error.message)
+		}
 	}
 }
