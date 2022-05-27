@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import { CheckPermission, CheckToken, DownloadPaylod, GenerateToken } from '../utility/Token'
-import { EmployeeModel, GetEmplyoeeByCredits, GetEmployeeById, GetEmployees } from '../entities/Employee'
+import { EmployeeModel, GetEmplyoeeByCredits, GetEmployeeById, GetEmployees, IEmployee } from '../entities/Employee'
 import { ObjectId } from 'mongoose'
 
 // Logowanie pracownika / generowanie tokenu
@@ -68,7 +68,7 @@ exports.Employee_Get = async function (req: Request, res: Response) {
 			res.status(403).send(error.message)
 		}
 	}
-	if (user) res.status(200).send(user)
+	if (user != false && user as IEmployee) res.status(200).send(user)
 	else res.status(500).send('Wystąpił nieoczekiwany błąd. Skontaktuj się z administratorem.')
 }
 
