@@ -717,17 +717,17 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > Date:
 > >
 > > - Now (now),
-> > - Today,
+> > - Today (today),
 > > - Tomorrow (tomarrow),
 > > - Any date, with a possible time
 > >
-> > Example: `reservation/list?sort=desc&sortby=clientname&date = June 1, 2022 08:00:00`
+> > Example: `reservation/list?sort=desc&sortby=clientname&date=June 1, 2022 08:00:00`
 
 > Reads reservation list.
 
 ### **List of reservations by confirmation status**
 
-`GET` reservation/ confirmed
+`GET` reservation/confirmed
 
 > Optional parameters:
 >
@@ -736,7 +736,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Confirmed (true),
 > > - Unconfirmed (false),
 > >
-> > Example: `reservation/confirmed? confirm=true`
+> > Example: `reservation/confirmed?confirm=true`
 
 > Reads the list of confirmed or not confirmed reservations. If the value is different, it returns reservations sorted from confirmed to unconfirmed.
 
@@ -803,8 +803,11 @@ To configure the connection with the database, create the "conifg.``` json" file
 ### **Reading the restaurant**
 
 `GET` restaurant/
+
 `GET` restaurant/:id
+
 `GET` restaurant/info
+
 `GET` restaurant/about
 
 > Reads the main restaurant or by the given ID.
