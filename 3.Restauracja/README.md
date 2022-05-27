@@ -129,7 +129,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 	"Password": "",
 	"Name": "",
 	"Surname": "",
-	"Position": "",
+	"Position": ""
 }
 ```
 
@@ -196,7 +196,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Ascending (asc),
 > > - Descending (desc)
 > >
-> > Example: `mealcategory/list?Sort=desc`
+> > Example: `mealcategory/list?sort=desc`
 
 > Reads a list of food categories.
 
@@ -265,7 +265,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > >
 > > - ID of the dish category
 > >
-> > Example: `meal/list?Sort=desc&sortby=price&category=628e7156e8276180b1d04808`
+> > Example: `meal/list?sort=desc&sortby=price&category=628e7156e8276180b1d04808`
 
 > Reads a list of dishes.
 
@@ -335,7 +335,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Price (price),
 > > - Default: Order status (orderstate)
 > >
-> > Example: `order/list?Sort=desc&sortby=price`
+> > Example: `order/list?sort=desc&sortby=price`
 
 > Reads order list. Appropriate permissions required.
 
@@ -402,7 +402,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Ascending (asc),
 > > - Descending (desc)
 > >
-> > Example: `orderstate/list?Sort=desc`
+> > Example: `orderstate/list?sort=desc`
 
 > Reads a list of available order statuses. Optionally sorted by name.
 
@@ -461,7 +461,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Ascending (asc),
 > > - Descending (desc)
 > >
-> > Example: `position/list?Sort=desc`
+> > Example: `position/list?sort=desc`
 
 > Reads the list of available employee positions. Optionally sorted by name.
 
@@ -473,7 +473,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ### **Read users by position**
 
-`GET` position/ employee: id
+`GET` position/employee:id
 
 > Reads the list of users assigned to this seat by the seat ID. Appropriate permissions required.
 
@@ -531,7 +531,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > Sorting parameters:
 > >
 > > - Unit (unit),
-> > - quantity,
+> > - quantity (quantity),
 > > - Price (price),
 > > - Default: Product name (name)
 > >
@@ -539,7 +539,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > >
 > > - Page number
 > >
-> > Example: `product/list?Sort=desc&sortby=price&page=2`
+> > Example: `product/list?sort=desc&sortby=price&page=2`
 
 > Reads a list of available products.
 
@@ -607,14 +607,14 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > Sorting parameters:
 > >
 > > - Unit (unit),
-> > - quantity,
+> > - quantity (quantity),
 > > - Default: Product name (name)
 > >
 > > Pagination:
 > >
 > > - Page number
 > >
-> > Example: `productneed/list? Sort=desc&sortby=name&page = 2`
+> > Example: `productneed/list?sort=desc&sortby=name&page = 2`
 
 > Reads a list of available products. Display 5 products per page. Appropriate permissions required.
 
@@ -662,7 +662,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ---
 
-## Reports
+## Raports
 
 ---
 
@@ -721,7 +721,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Tomorrow (tomarrow),
 > > - Any date, with a possible time
 > >
-> > Example: `reservation/list? Sort=desc&sortby=clientname&date = June 1, 2022 08: 00: 00`
+> > Example: `reservation/list?sort=desc&sortby=clientname&date = June 1, 2022 08:00:00`
 
 > Reads reservation list.
 
@@ -736,7 +736,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Confirmed (true),
 > > - Unconfirmed (false),
 > >
-> > Example: `reservation/ confirmed? Confirm = true`
+> > Example: `reservation/confirmed? confirm=true`
 
 > Reads the list of confirmed or not confirmed reservations. If the value is different, it returns reservations sorted from confirmed to unconfirmed.
 
@@ -873,7 +873,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Number of seats (seats),
 > > - Default: Table number (number)
 > >
-> > Example: `table/list? Sort=desc&sortby=number`
+> > Example: `table/list?sort=desc&sortby=number`
 
 > Reads a list of tables.
 
@@ -894,7 +894,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Full date with time,
 > > - On the given date
 > >
-> > Example: `table/ available? Date = May 26, 2022 10: 24: 00`
+> > Example: `table/available?date=May 26, 2022 10:24:00`
 
 > Reads a list of available tables.
 
@@ -909,7 +909,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Full date with time,
 > > - On the given date
 > >
-> > Example: `table/ busy? Date = May 26, 2022 10: 24: 00`
+> > Example: `table/busy?date=May 26, 2022 10:24:00`
 
 > Reads a list of occupied tables.
 
@@ -970,7 +970,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Ascending (asc),
 > > - Descending (desc)
 > >
-> > Example: `tablestate/list?Sort=desc`
+> > Example: `tablestate/list?sort=desc`
 
 > Reads a list of available order statuses. Optionally sorted by name.
 
@@ -1029,7 +1029,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > > - Ascending (asc),
 > > - Descending (desc)
 > >
-> > Example: `unit/list? Sort = desc`
+> > Example: `unit/list?sort=desc`
 
 > Reads a list of available units. Optionally sorted by name.
 
