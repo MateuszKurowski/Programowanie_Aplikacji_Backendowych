@@ -105,7 +105,6 @@ To configure the connection with the database, create the "conifg.``` json" file
 {
 	"Login": "",
 	"Password": "",
-	"Password": "",
 	"Name": "",
 	"Surname": "",
 	"Position": ""

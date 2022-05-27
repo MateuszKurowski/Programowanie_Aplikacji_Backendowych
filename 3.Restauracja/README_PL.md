@@ -100,7 +100,6 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 {
 	"Login": "",
 	"Password": "",
-	"Password": "",
 	"Name": "",
 	"Surname": "",
 	"Position": ""
