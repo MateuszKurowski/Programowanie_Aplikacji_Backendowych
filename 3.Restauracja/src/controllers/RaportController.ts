@@ -18,7 +18,7 @@ exports.Raport_Get_Orders_Per_Table = async function (req: Request, res: Respons
 		}
 	}
 
-	const tableInput = req.query.number
+	const tableInput = req.params.number
 	if (tableInput) {
 		res.status(400).send('Nieprawidłowe zapytanie.')
 		return
@@ -54,7 +54,7 @@ exports.Raport_Get_Orders_Per_Employee = async function (req: Request, res: Resp
 		}
 	}
 
-	const employeeInput = req.query.number
+	const employeeInput = req.params.number
 	if (employeeInput) {
 		res.status(400).send('Nieprawidłowe zapytanie.')
 		return
