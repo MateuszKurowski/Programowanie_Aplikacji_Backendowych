@@ -1,6 +1,0 @@
-{
-	"secret": "mateuszKurowski",
-	"connectionString": "mongodb+srv://Admin:Admin123@cluster0.zbsku.mongodb.net/?retryWrites=true&w=majority",
-	"userDatabaseLogin": "Admin",
-	"userDatabasePassword": "Admin123"
-}
