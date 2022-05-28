@@ -197,7 +197,22 @@ exports.Table_Get_All_Busy = async function (req: Request, res: Response) {
 		}
 	}
 
-	const busyTablesNumbers = await GetBusyTablesForNow()
+	let busyTablesNumbers: any
+	const date = req.query.date
+	if (date) {
+		try {
+			const validDate = new Date(date as string)
+			if (validDate.getHours() == 0) {
+				busyTablesNumbers = await GetBusyTablesForDate(validDate)
+			} else {
+				busyTablesNumbers = await GetBusyTablesForFullDate(validDate)
+			}
+		} catch (error) {
+			res.status(400).send('Podano nieprawidłowy format daty!')
+		}
+	} else {
+		busyTablesNumbers = await GetBusyTablesForNow()
+	}
 
 	const seats = req.query.seats
 	let tables: any
@@ -232,11 +247,11 @@ exports.Table_Post = async function (req: Request, res: Response) {
 		}
 	}
 
-	const name = req.body.Name
+	const tableNumber = req.body.TableNumber
 	const seatsNumber = req.body.SeatsNumber
 	try {
 		const table = new TableModel({
-			Name: name,
+			TableNumber: tableNumber,
 			SeatsNumber: seatsNumber,
 		})
 		await table.save()
@@ -268,7 +283,7 @@ exports.Table_Get = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -301,7 +316,7 @@ exports.Table_Put = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -352,7 +367,7 @@ exports.Table_Delete = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',

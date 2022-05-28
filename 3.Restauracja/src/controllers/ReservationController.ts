@@ -11,7 +11,7 @@ import {
 	GetReservationForFullDate,
 	GetByConfirm,
 } from '../entities/Reservation'
-import mongoose, { ObjectId } from 'mongoose'
+import mongoose from 'mongoose'
 
 exports.Reservation_Get_All = async function (req: Request, res: Response) {
 	try {
@@ -74,11 +74,11 @@ exports.Reservation_Get_All = async function (req: Request, res: Response) {
 						})
 					case 'startdate':
 					default:
-						reservations = reservations.sort((one: { startDate: Date }, two: { startDate: Date }) => {
-							if (one.startDate > two.startDate) {
+						reservations = reservations.sort((one: { StartDate: Date }, two: { StartDate: Date }) => {
+							if (one.StartDate > two.StartDate) {
 								return -1
 							}
-							if (one.startDate < two.startDate) {
+							if (one.StartDate < two.StartDate) {
 								return 1
 							}
 							return 0
@@ -99,11 +99,11 @@ exports.Reservation_Get_All = async function (req: Request, res: Response) {
 						})
 					case 'startdate':
 					default:
-						reservations = reservations.sort((one: { startDate: Date }, two: { startDate: Date }) => {
-							if (one.startDate > two.startDate) {
+						reservations = reservations.sort((one: { StartDate: Date }, two: { StartDate: Date }) => {
+							if (one.StartDate > two.StartDate) {
 								return 1
 							}
-							if (one.startDate < two.startDate) {
+							if (one.StartDate < two.StartDate) {
 								return -1
 							}
 							return 0
@@ -134,9 +134,9 @@ exports.Reservation_Get_All_Corfirmed = async function (req: Request, res: Respo
 	}
 
 	let reservations: any
-	const confirm = req.query.confirm as string
-	if (confirm) {
-		switch (confirm.toLowerCase()) {
+	const confirmed = req.query.confirmed as string
+	if (confirmed) {
+		switch (confirmed.toLowerCase()) {
 			case 'true':
 				reservations = await GetByConfirm(true)
 				break
@@ -219,7 +219,7 @@ exports.Reservation_Get = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -252,7 +252,7 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -314,7 +314,7 @@ exports.Reservation_Delete = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
