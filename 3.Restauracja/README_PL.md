@@ -525,7 +525,6 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 > >
 > > Parametry do sortowania:
 > >
-> > - Jednostka (unit),
 > > - Ilość (quantity),
 > > - Cena (price),
 > > - Domyślnie: Nazwa produktu (name)
@@ -601,7 +600,6 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 > >
 > > Parametry do sortowania:
 > >
-> > - Jednostka (unit),
 > > - Ilość (quantity),
 > > - Domyślnie: Nazwa produktu (name)
 > >

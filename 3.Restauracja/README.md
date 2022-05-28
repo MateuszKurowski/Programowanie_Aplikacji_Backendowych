@@ -530,7 +530,6 @@ To configure the connection with the database, create the "conifg.``` json" file
 > >
 > > Sorting parameters:
 > >
-> > - Unit (unit),
 > > - quantity (quantity),
 > > - Price (price),
 > > - Default: Product name (name)
@@ -606,7 +605,6 @@ To configure the connection with the database, create the "conifg.``` json" file
 > >
 > > Sorting parameters:
 > >
-> > - Unit (unit),
 > > - quantity (quantity),
 > > - Default: Product name (name)
 > >
