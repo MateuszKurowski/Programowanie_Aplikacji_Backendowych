@@ -22,10 +22,26 @@ exports.Unit_Get_All = async function (req: Request, res: Response) {
 		switch (sortValue.toLowerCase()) {
 			default:
 			case 'desc':
-				units = (await GetUnits()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				units = (await GetUnits()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return -1
+					}
+					if (one.Name < two.Name) {
+						return 1
+					}
+					return 0
+				})
 				break
 			case 'asc':
-				units = (await GetUnits()).sort()
+				units = (await GetUnits()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return 1
+					}
+					if (one.Name < two.Name) {
+						return -1
+					}
+					return 0
+				})
 				break
 		}
 	} else {

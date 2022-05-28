@@ -29,47 +29,96 @@ exports.Order_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'employee':
-						orders = (await GetOrders()).sort((one, two) =>
-							(one.Employee as unknown as IEmployee).Surname > (two.Employee as unknown as IEmployee).Surname ? -1 : 1
-						)
+						orders = (await GetOrders()).sort((one, two) => {
+							if ((one.Employee as unknown as IEmployee).Surname > (two.Employee as unknown as IEmployee).Surname) {
+								return -1
+							}
+							if ((one.Employee as unknown as IEmployee).Surname < (two.Employee as unknown as IEmployee).Surname) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'table':
-						orders = (await GetOrders()).sort((one, two) =>
-							(one.Employee as unknown as ITable).TableNumber > (two.Employee as unknown as ITable).TableNumber ? -1 : 1
-						)
+						orders = (await GetOrders()).sort((one, two) => {
+							if ((one.Table as unknown as ITable).TableNumber > (two.Table as unknown as ITable).TableNumber) {
+								return -1
+							}
+							if ((one.Table as unknown as ITable).TableNumber < (two.Table as unknown as ITable).TableNumber) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'price':
-						orders = (await GetOrders()).sort((one, two) => (one.Price < two.Price ? -1 : 1))
-						break
+						orders = (await GetOrders()).sort((one, two) => {
+							if (one.Price > two.Price) {
+								return -1
+							}
+							if (one.Price < two.Price) {
+								return 1
+							}
+							return 0
+						})
 					case 'orderstate':
 					default:
-						orders = (await GetOrders()).sort((one, two) =>
-							(one.Employee as unknown as IOrderState).Name > (two.Employee as unknown as IOrderState).Name ? -1 : 1
-						)
+						orders = (await GetOrders()).sort((one, two) => {
+							if ((one.OrderState as unknown as IOrderState).Name > (two.OrderState as unknown as IOrderState).Name) {
+								return -1
+							}
+							if ((one.OrderState as unknown as IOrderState).Name < (two.OrderState as unknown as IOrderState).Name) {
+								return 1
+							}
+							return 0
+						})
 						break
 				}
 				break
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'employee':
-						orders = (await GetOrders()).sort((one, two) =>
-							(one.Employee as unknown as IEmployee).Surname < (two.Employee as unknown as IEmployee).Surname ? -1 : 1
-						)
+						orders = (await GetOrders()).sort((one, two) => {
+							if ((one.Employee as unknown as IEmployee).Surname > (two.Employee as unknown as IEmployee).Surname) {
+								return 1
+							}
+							if ((one.Employee as unknown as IEmployee).Surname < (two.Employee as unknown as IEmployee).Surname) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'table':
-						orders = (await GetOrders()).sort((one, two) =>
-							(one.Employee as unknown as ITable).TableNumber < (two.Employee as unknown as ITable).TableNumber ? -1 : 1
-						)
+						orders = (await GetOrders()).sort((one, two) => {
+							if ((one.Table as unknown as ITable).TableNumber > (two.Table as unknown as ITable).TableNumber) {
+								return 1
+							}
+							if ((one.Table as unknown as ITable).TableNumber < (two.Table as unknown as ITable).TableNumber) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'price':
-						orders = (await GetOrders()).sort((one, two) => (one.Price < two.Price ? -1 : 1))
-						break
+						orders = (await GetOrders()).sort((one, two) => {
+							if (one.Price > two.Price) {
+								return 1
+							}
+							if (one.Price < two.Price) {
+								return -1
+							}
+							return 0
+						})
 					case 'orderstate':
 					default:
-						orders = (await GetOrders()).sort((one, two) =>
-							(one.Employee as unknown as IOrderState).Name < (two.Employee as unknown as IOrderState).Name ? -1 : 1
-						)
-						break
+						orders = (await GetOrders()).sort((one, two) => {
+							if ((one.OrderState as unknown as IOrderState).Name > (two.OrderState as unknown as IOrderState).Name) {
+								return 1
+							}
+							if ((one.OrderState as unknown as IOrderState).Name < (two.OrderState as unknown as IOrderState).Name) {
+								return -1
+							}
+							return 0
+						})
 				}
 				break
 		}

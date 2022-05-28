@@ -33,22 +33,54 @@ exports.Table_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'seats':
-						tables = (await GetTables()).sort((one, two) => (one.SeatsNumber > two.SeatsNumber ? -1 : 1))
+						tables = (await GetTables()).sort((one, two) => {
+							if (one.SeatsNumber > two.SeatsNumber) {
+								return -1
+							}
+							if (one.SeatsNumber < two.SeatsNumber) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'number':
 					default:
-						tables = (await GetTables()).sort((one, two) => (one.TableNumber > two.TableNumber ? -1 : 1))
+						tables = (await GetTables()).sort((one, two) => {
+							if (one.TableNumber > two.TableNumber) {
+								return -1
+							}
+							if (one.TableNumber < two.TableNumber) {
+								return 1
+							}
+							return 0
+						})
 						break
 				}
 				break
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'seats':
-						tables = (await GetTables()).sort((one, two) => (one.SeatsNumber < two.SeatsNumber ? -1 : 1))
+						tables = (await GetTables()).sort((one, two) => {
+							if (one.SeatsNumber > two.SeatsNumber) {
+								return 1
+							}
+							if (one.SeatsNumber < two.SeatsNumber) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'number':
 					default:
-						tables = (await GetTables()).sort((one, two) => (one.TableNumber < two.TableNumber ? -1 : 1))
+						tables = (await GetTables()).sort((one, two) => {
+							if (one.TableNumber > two.TableNumber) {
+								return 1
+							}
+							if (one.TableNumber < two.TableNumber) {
+								return -1
+							}
+							return 0
+						})
 						break
 				}
 				break

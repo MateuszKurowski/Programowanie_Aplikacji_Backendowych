@@ -22,10 +22,26 @@ exports.MealCategory_Get_All = async function (req: Request, res: Response) {
 		switch (sortValue.toLowerCase()) {
 			default:
 			case 'desc':
-				mealCategories = (await GetMealCategories()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				mealCategories = (await GetMealCategories()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return -1
+					}
+					if (one.Name < two.Name) {
+						return 1
+					}
+					return 0
+				})
 				break
 			case 'asc':
-				mealCategories = (await GetMealCategories()).sort()
+				mealCategories = (await GetMealCategories()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return 1
+					}
+					if (one.Name < two.Name) {
+						return -1
+					}
+					return 0
+				})
 				break
 		}
 	} else {

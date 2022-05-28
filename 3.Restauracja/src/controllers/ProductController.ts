@@ -36,50 +36,118 @@ exports.Product_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'unit':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => (one.Unit > two.Unit ? -1 : 1))
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Unit > two.Unit) {
+								return -1
+							}
+							if (one.Unit < two.Unit) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'quantity':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) =>
-							one.Quantity > two.Quantity ? -1 : 1
-						)
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Quantity > two.Quantity) {
+								return -1
+							}
+							if (one.Quantity < two.Quantity) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'price':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => (one.Price > two.Price ? -1 : 1))
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Price > two.Price) {
+								return -1
+							}
+							if (one.Price < two.Price) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'name':
 					default:
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Name > two.Name) {
+								return -1
+							}
+							if (one.Name < two.Name) {
+								return 1
+							}
+							return 0
+						})
 						break
 				}
 				break
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'unit':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => (one.Unit < two.Unit ? -1 : 1))
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Unit > two.Unit) {
+								return 1
+							}
+							if (one.Unit < two.Unit) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'quantity':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) =>
-							one.Quantity < two.Quantity ? -1 : 1
-						)
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Quantity > two.Quantity) {
+								return 1
+							}
+							if (one.Quantity < two.Quantity) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'price':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => (one.Price < two.Price ? -1 : 1))
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Price > two.Price) {
+								return 1
+							}
+							if (one.Price < two.Price) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'name':
 					default:
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => (one.Name < two.Name ? -1 : 1))
+						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
+							if (one.Name > two.Name) {
+								return 1
+							}
+							if (one.Name < two.Name) {
+								return -1
+							}
+							return 0
+						})
 						break
 				}
 				break
 		}
 	} else {
-		products = await GetProducts()
+		if (pageNumber) products = await GetProductsWithPage(pageNumber)
+		else products = await GetProducts()
 	}
+	if (!pageNumber || pageNumber == 0) pageNumber = 1
 
+	const countPage = (await ProductModel.countDocuments()) / 5
 	if (!products) {
 		res.status(204).send('Tabela jest pusta.')
 	} else {
-		res.status(200).send(products)
+		if (products.length > 0)
+			res.status(200).send({
+				Pages: pageNumber + '/' + Math.ceil(countPage),
+				Products: products,
+			})
+		else res.status(200).send('Strona jest pusta. Ilość dostępnych stron: ' + Math.ceil(countPage))
 	}
 }
 

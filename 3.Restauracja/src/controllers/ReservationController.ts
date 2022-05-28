@@ -63,31 +63,51 @@ exports.Reservation_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'clientname':
-						reservations = reservations.sort((one: { ClientName: string }, two: { ClientName: string }) =>
-							one.ClientName > two.ClientName ? -1 : 1
-						)
-						break
+						reservations = reservations.sort((one: { ClientName: string }, two: { ClientName: string }) => {
+							if (one.ClientName > two.ClientName) {
+								return -1
+							}
+							if (one.ClientName < two.ClientName) {
+								return 1
+							}
+							return 0
+						})
 					case 'startdate':
 					default:
-						reservations = reservations.sort((one: { startDate: Date }, two: { startDate: Date }) =>
-							one.startDate > two.startDate ? -1 : 1
-						)
-						break
+						reservations = reservations.sort((one: { startDate: Date }, two: { startDate: Date }) => {
+							if (one.startDate > two.startDate) {
+								return -1
+							}
+							if (one.startDate < two.startDate) {
+								return 1
+							}
+							return 0
+						})
 				}
 				break
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'clientname':
-						reservations = reservations.sort((one: { ClientName: string }, two: { ClientName: string }) =>
-							one.ClientName < two.ClientName ? -1 : 1
-						)
-						break
+						reservations = reservations.sort((one: { ClientName: string }, two: { ClientName: string }) => {
+							if (one.ClientName > two.ClientName) {
+								return 1
+							}
+							if (one.ClientName < two.ClientName) {
+								return -1
+							}
+							return 0
+						})
 					case 'startdate':
 					default:
-						reservations = reservations.sort((one: { StartDate: Date }, two: { StartDate: Date }) =>
-							one.StartDate < two.StartDate ? -1 : 1
-						)
-						break
+						reservations = reservations.sort((one: { startDate: Date }, two: { startDate: Date }) => {
+							if (one.startDate > two.startDate) {
+								return 1
+							}
+							if (one.startDate < two.startDate) {
+								return -1
+							}
+							return 0
+						})
 				}
 				break
 		}

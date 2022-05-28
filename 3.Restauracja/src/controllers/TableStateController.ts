@@ -22,10 +22,26 @@ exports.TableState_Get_All = async function (req: Request, res: Response) {
 		switch (sortValue.toLowerCase()) {
 			default:
 			case 'desc':
-				tableStates = (await GetTableStates()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				tableStates = (await GetTableStates()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return -1
+					}
+					if (one.Name < two.Name) {
+						return 1
+					}
+					return 0
+				})
 				break
 			case 'asc':
-				tableStates = (await GetTableStates()).sort()
+				tableStates = (await GetTableStates()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return 1
+					}
+					if (one.Name < two.Name) {
+						return -1
+					}
+					return 0
+				})
 				break
 		}
 	} else {

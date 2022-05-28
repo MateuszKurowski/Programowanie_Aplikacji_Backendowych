@@ -22,10 +22,26 @@ exports.Position_Get_All = async function (req: Request, res: Response) {
 		switch (sortValue.toLowerCase()) {
 			default:
 			case 'desc':
-				positions = (await GetPositions()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				positions = (await GetPositions()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return -1
+					}
+					if (one.Name < two.Name) {
+						return 1
+					}
+					return 0
+				})
 				break
 			case 'asc':
-				positions = (await GetPositions()).sort()
+				positions = (await GetPositions()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return 1
+					}
+					if (one.Name < two.Name) {
+						return -1
+					}
+					return 0
+				})
 				break
 		}
 	} else {
@@ -149,12 +165,12 @@ exports.Position_Put = async function (req: Request, res: Response) {
 				{ _id: id },
 				{
 					$set: {
-						Name: req.body.name,
+						Name: req.body.Name,
 						AccessLevel: req.body.AccessLevel,
 					},
 				}
 			)
-			position!.Name = req.body.name
+			position!.Name = req.body.Name
 			position!.AccessLevel = req.body.AccessLevel
 			res.status(200).send({
 				Message: 'Operacja powiodła się.',

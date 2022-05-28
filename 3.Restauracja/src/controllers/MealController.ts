@@ -26,32 +26,76 @@ exports.Meal_Get_All = async function (req: Request, res: Response) {
 			case 'desc':
 				switch (sortBy.toLowerCase()) {
 					case 'price':
-						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.Price > two.Price ? -1 : 1))
+						meals = (await GetMealByCategoryId(category)).sort((one, two) => {
+							if (one.Price > two.Price) {
+								return -1
+							}
+							if (one.Price < two.Price) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'mealcategory':
-						meals = (await GetMealByCategoryId(category)).sort((one, two) =>
-							one.MealCategory > two.MealCategory ? -1 : 1
-						)
+						meals = (await GetMealByCategoryId(category)).sort((one, two) => {
+							if (one.MealCategory > two.MealCategory) {
+								return -1
+							}
+							if (one.MealCategory < two.MealCategory) {
+								return 1
+							}
+							return 0
+						})
 						break
 					case 'name':
 					default:
-						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+						meals = (await GetMealByCategoryId(category)).sort((one, two) => {
+							if (one.Name > two.Name) {
+								return -1
+							}
+							if (one.Name < two.Name) {
+								return 1
+							}
+							return 0
+						})
 						break
 				}
 				break
 			case 'asc':
 				switch (sortBy.toLowerCase()) {
 					case 'price':
-						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.Price < two.Price ? -1 : 1))
+						meals = (await GetMealByCategoryId(category)).sort((one, two) => {
+							if (one.Price > two.Price) {
+								return 1
+							}
+							if (one.Price < two.Price) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'mealcategory':
-						meals = (await GetMealByCategoryId(category)).sort((one, two) =>
-							one.MealCategory < two.MealCategory ? -1 : 1
-						)
+						meals = (await GetMealByCategoryId(category)).sort((one, two) => {
+							if (one.MealCategory > two.MealCategory) {
+								return 1
+							}
+							if (one.MealCategory < two.MealCategory) {
+								return -1
+							}
+							return 0
+						})
 						break
 					case 'name':
 					default:
-						meals = (await GetMealByCategoryId(category)).sort((one, two) => (one.Name < two.Name ? -1 : 1))
+						meals = (await GetMealByCategoryId(category)).sort((one, two) => {
+							if (one.Name > two.Name) {
+								return 1
+							}
+							if (one.Name < two.Name) {
+								return -1
+							}
+							return 0
+						})
 						break
 				}
 				break

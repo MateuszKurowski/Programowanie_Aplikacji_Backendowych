@@ -22,10 +22,26 @@ exports.OrderState_Get_All = async function (req: Request, res: Response) {
 		switch (sortValue.toLowerCase()) {
 			default:
 			case 'desc':
-				orderStates = (await GetOrderStates()).sort((one, two) => (one.Name > two.Name ? -1 : 1))
+				orderStates = (await GetOrderStates()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return -1
+					}
+					if (one.Name < two.Name) {
+						return 1
+					}
+					return 0
+				})
 				break
 			case 'asc':
-				orderStates = (await GetOrderStates()).sort()
+				orderStates = (await GetOrderStates()).sort((one, two) => {
+					if (one.Name > two.Name) {
+						return 1
+					}
+					if (one.Name < two.Name) {
+						return -1
+					}
+					return 0
+				})
 				break
 		}
 	} else {
