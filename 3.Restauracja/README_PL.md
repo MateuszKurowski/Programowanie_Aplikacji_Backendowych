@@ -468,7 +468,7 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 
 ### **Odczytanie użytkowników po stanowisku**
 
-`GET` position/employee:id
+`GET` position/employees/:id
 
 > Odczytuje liste użytkowników przypisanych do tego stanowiska po ID stanowiska. Wymagane odpowiednie uprawnienia.
 
@@ -536,7 +536,7 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 > >
 > > Przykład: `product/list?sort=desc&sortby=price&page=2`
 
-> Odczytuje liste dostępnych produktów.
+> Odczytuje liste dostępnych produktów. W przypadku braku podania strony pokazuje pierwszą stronę. Pokazuje 5 produktów na stronę.
 
 ### **Odczytanie produktu**
 

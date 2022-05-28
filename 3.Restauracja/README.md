@@ -473,7 +473,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ### **Read users by position**
 
-`GET` position/employee:id
+`GET` position/employees/:id
 
 > Reads the list of users assigned to this seat by the seat ID. Appropriate permissions required.
 
@@ -541,7 +541,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 > >
 > > Example: `product/list?sort=desc&sortby=price&page=2`
 
-> Reads a list of available products.
+> Reads a list of available products. If no page is given, it shows the first page. Shows 5 products per page.
 
 ### **Read product**
 
