@@ -874,13 +874,13 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 
 ### **Lista stolików z obecnymi statusami**
 
-`GET` table/status
+`GET` table/list/status
 
 > Odczytuje liste stolików z obecnymi statusami.
 
 ### **Lista stolików dostępnych stolików**
 
-`GET` table/available
+`GET` table/list/available
 
 > Opcjonalne parametry:
 >
@@ -895,7 +895,7 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 
 ### **Lista stolików zajętych stolików**
 
-`GET` table/busy
+`GET` table/list/busy
 
 > Opcjonalne parametry:
 >
@@ -920,7 +920,7 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 
 ```json
 {
-	"Name": "",
+	"TableNumber": "",
 	"SeatsNumber": ""
 }
 ```
@@ -933,7 +933,7 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 
 ```json
 {
-	"Name": "",
+	"TableNumber": "",
 	"SeatsNumber": ""
 }
 ```

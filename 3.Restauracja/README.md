@@ -882,13 +882,13 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ### **List of tables with current status**
 
-`GET` table/status
+`GET` table/list/status
 
 > Reads a list of tables with the current statuses.
 
 ### **List of tables available tables**
 
-`GET` table/available
+`GET` table/list/available
 
 > Optional parameters:
 >
@@ -903,7 +903,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ### **List of tables in occupied tables**
 
-`GET` table/busy
+`GET` table/list/busy
 
 > Optional parameters:
 >
@@ -928,7 +928,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ```json
 {
-	"Name": "",
+	"TableNumber": "",
 	"SeatsNumber": ""
 }
 ```
@@ -941,7 +941,7 @@ To configure the connection with the database, create the "conifg.``` json" file
 
 ```json
 {
-	"Name": "",
+	"TableNumber": "",
 	"SeatsNumber": ""
 }
 ```
