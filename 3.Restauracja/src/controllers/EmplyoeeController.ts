@@ -174,7 +174,16 @@ exports.Employee_Get_By_Id = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const employee = await GetEmployeeById(id)
 
 	if (employee) res.status(200).send(employee)
@@ -195,7 +204,16 @@ exports.Employee_Put_By_Id = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const employee = await GetEmployeeById(id)
 
 	if (!employee) {
@@ -243,7 +261,16 @@ exports.Employee_Delete_By_Id = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const employee = await GetEmployeeById(id)
 
 	if (!employee) {

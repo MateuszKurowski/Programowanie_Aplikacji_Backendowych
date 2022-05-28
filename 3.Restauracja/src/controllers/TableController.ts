@@ -266,7 +266,16 @@ exports.Table_Get = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const table = await GetTableById(id)
 
 	if (!table) {
@@ -290,7 +299,16 @@ exports.Table_Put = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const table = await GetTableById(id)
 
 	if (!table) {
@@ -332,7 +350,16 @@ exports.Table_Delete = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const table = await GetTableById(id)
 
 	if (!table) {

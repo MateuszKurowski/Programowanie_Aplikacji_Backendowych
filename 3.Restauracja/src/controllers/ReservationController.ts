@@ -217,7 +217,16 @@ exports.Reservation_Get = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const reservation = await GetReservationById(id)
 
 	if (!reservation) {
@@ -241,7 +250,16 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const reservation = await GetReservationById(id)
 	let isConfirmed = req.body.IsConfirmed
 	if (!isConfirmed) isConfirmed = 'false'
@@ -294,7 +312,16 @@ exports.Reservation_Delete = async function (req: Request, res: Response) {
 	}
 
 	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	const id = req.params.id as unknown as ObjectId
+	let id: ObjectId
+	try {
+		id = req.params.id as unknown as ObjectId
+	} catch (error: any) {
+		res.status(403).send({
+			Message: 'Podano błędne ID.',
+			Error: error.message,
+		})
+		return
+	}
 	const reservation = await GetReservationById(id)
 
 	if (!reservation) {
