@@ -68,8 +68,8 @@ exports.Employee_Get = async function (req: Request, res: Response) {
 			res.status(403).send(error.message)
 		}
 	}
-	if (user != false && user as IEmployee) res.status(200).send(user)
-	else res.status(500).send('Wystąpił nieoczekiwany błąd. Skontaktuj się z administratorem.')
+	if (user != false && (user as IEmployee)) res.status(200).send(user)
+	else res.status(500).send('Nie posiadasz konta pracownika.')
 }
 
 exports.Employee_Put = async function (req: Request, res: Response) {
@@ -142,7 +142,7 @@ exports.Employee_Delete = async function (req: Request, res: Response) {
 }
 
 // ADMIN ---------------------------- //
-exports.Employee_Get_List_By_Id = async function (req: Request, res: Response) {
+exports.Employee_Get_List = async function (req: Request, res: Response) {
 	try {
 		await CheckPermission(req, ['Szef, Zastępca szefa'])
 	} catch (error: any) {
@@ -155,10 +155,8 @@ exports.Employee_Get_List_By_Id = async function (req: Request, res: Response) {
 		}
 	}
 
-	const token = req.headers.authorization?.split(' ')[1]
-	const userId = DownloadPaylod(token!).Id
-	const user = await GetEmployeeById(userId)
-	if (user) res.status(200).send(user)
+	const employees = await GetEmployees()
+	if (employees && employees.length > 0) res.status(200).send(employees)
 	else res.status(404).send('Zapytanie nie zwróciło żadnego wyniku')
 }
 
