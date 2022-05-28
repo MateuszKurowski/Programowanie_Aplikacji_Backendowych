@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import { CheckPermission } from '../utility/Token'
-import { GetProductNeedById, GetProductNeeds, GetProductNeedsWithPage, ProductNeedModel } from '../entities/ProductNeed'
+import { GetProductNeedById, GetProductNeeds, GetProductNeedsWithPage, GetProductNeedsWithPageAndSort, ProductNeedModel } from '../entities/ProductNeed'
 import mongoose, { ObjectId } from 'mongoose'
 
 exports.ProductNeed_Get_All = async function (req: Request, res: Response) {
@@ -31,88 +31,9 @@ exports.ProductNeed_Get_All = async function (req: Request, res: Response) {
 	const sort = (req.query.sort as string) ?? null
 	let productNeeds: any
 	if (sort) {
-		switch (sort.toLowerCase()) {
-			default:
-			case 'desc':
-				switch (sortBy.toLowerCase()) {
-					case 'unit':
-						productNeeds = (await GetProductNeedsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Unit > two.Unit) {
-								return -1
-							}
-							if (one.Unit < two.Unit) {
-								return 1
-							}
-							return 0
-						})
-						break
-					case 'quantity':
-						productNeeds = (await GetProductNeedsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Quantity > two.Quantity) {
-								return -1
-							}
-							if (one.Quantity < two.Quantity) {
-								return 1
-							}
-							return 0
-						})
-						break
-					case 'name':
-					default:
-						productNeeds = (await GetProductNeedsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Name > two.Name) {
-								return -1
-							}
-							if (one.Name < two.Name) {
-								return 1
-							}
-							return 0
-						})
-						break
-				}
-				break
-			case 'asc':
-				switch (sortBy.toLowerCase()) {
-					case 'unit':
-						productNeeds = (await GetProductNeedsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Unit > two.Unit) {
-								return 1
-							}
-							if (one.Unit < two.Unit) {
-								return -1
-							}
-							return 0
-						})
-						break
-					case 'quantity':
-						productNeeds = (await GetProductNeedsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Quantity > two.Quantity) {
-								return 1
-							}
-							if (one.Quantity < two.Quantity) {
-								return -1
-							}
-							return 0
-						})
-						break
-					case 'name':
-					default:
-						productNeeds = (await GetProductNeedsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Name > two.Name) {
-								return 1
-							}
-							if (one.Name < two.Name) {
-								return -1
-							}
-							return 0
-						})
-						break
-				}
-				break
-		}
+		productNeeds = await GetProductNeedsWithPageAndSort(pageNumber, sort, sortBy)
 	} else {
-		if (pageNumber) productNeeds = await GetProductNeedsWithPage(pageNumber)
-		else productNeeds = await GetProductNeeds()
+		productNeeds = await GetProductNeedsWithPage(pageNumber)
 	}
 	if (!pageNumber || pageNumber == 0) pageNumber = 1
 

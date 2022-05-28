@@ -1,6 +1,12 @@
 import { Response, Request } from 'express'
 import { CheckPermission } from '../utility/Token'
-import { GetProducts, GetProductById, ProductModel, GetProductsWithPage } from '../entities/Product'
+import {
+	GetProducts,
+	GetProductById,
+	ProductModel,
+	GetProductsWithPage,
+	GetProductsWithPageAndSort,
+} from '../entities/Product'
 import mongoose, { ObjectId } from 'mongoose'
 
 exports.Product_Get_All = async function (req: Request, res: Response) {
@@ -31,110 +37,9 @@ exports.Product_Get_All = async function (req: Request, res: Response) {
 	const sort = (req.query.sort as string) ?? null
 	let products: any
 	if (sort) {
-		switch (sort.toLowerCase()) {
-			default:
-			case 'desc':
-				switch (sortBy.toLowerCase()) {
-					case 'unit':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Unit > two.Unit) {
-								return -1
-							}
-							if (one.Unit < two.Unit) {
-								return 1
-							}
-							return 0
-						})
-						break
-					case 'quantity':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Quantity > two.Quantity) {
-								return -1
-							}
-							if (one.Quantity < two.Quantity) {
-								return 1
-							}
-							return 0
-						})
-						break
-					case 'price':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Price > two.Price) {
-								return -1
-							}
-							if (one.Price < two.Price) {
-								return 1
-							}
-							return 0
-						})
-						break
-					case 'name':
-					default:
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Name > two.Name) {
-								return -1
-							}
-							if (one.Name < two.Name) {
-								return 1
-							}
-							return 0
-						})
-						break
-				}
-				break
-			case 'asc':
-				switch (sortBy.toLowerCase()) {
-					case 'unit':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Unit > two.Unit) {
-								return 1
-							}
-							if (one.Unit < two.Unit) {
-								return -1
-							}
-							return 0
-						})
-						break
-					case 'quantity':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Quantity > two.Quantity) {
-								return 1
-							}
-							if (one.Quantity < two.Quantity) {
-								return -1
-							}
-							return 0
-						})
-						break
-					case 'price':
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Price > two.Price) {
-								return 1
-							}
-							if (one.Price < two.Price) {
-								return -1
-							}
-							return 0
-						})
-						break
-					case 'name':
-					default:
-						products = (await GetProductsWithPage(pageNumber)).sort((one, two) => {
-							if (one.Name > two.Name) {
-								return 1
-							}
-							if (one.Name < two.Name) {
-								return -1
-							}
-							return 0
-						})
-						break
-				}
-				break
-		}
+		products = await GetProductsWithPageAndSort(pageNumber, sort, sortBy)
 	} else {
-		if (pageNumber) products = await GetProductsWithPage(pageNumber)
-		else products = await GetProducts()
+		products = await GetProductsWithPage(pageNumber)
 	}
 	if (!pageNumber || pageNumber == 0) pageNumber = 1
 
@@ -204,7 +109,7 @@ exports.Product_Get = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -237,7 +142,7 @@ exports.Product_Put = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -292,7 +197,7 @@ exports.Product_Delete = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',

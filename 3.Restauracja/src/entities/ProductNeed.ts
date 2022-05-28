@@ -32,14 +32,44 @@ export async function GetProductNeeds() {
 	return await ProductNeedModel.find()
 }
 
-export async function GetProductNeedsWithPage(page: number) {
-	if (page == 1) {
-		return await ProductNeedModel.find().limit(5)
-	} else {
-		return await ProductNeedModel.find()
-			.skip(page * 5 - 5)
-			.limit(5)
+export async function GetProductNeedsWithPageAndSort(pageNumber: number, sort: string, sortBy: string) {
+	switch (sort.toLowerCase()) {
+		default:
+		case 'desc':
+			switch (sortBy.toLowerCase()) {
+				case 'quantity':
+					return await ProductNeedModel.find()
+						.sort({ Quantity: 'desc' })
+						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.limit(5)
+				case 'name':
+				default:
+					return await ProductNeedModel.find()
+						.sort({ Name: 'desc' })
+						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.limit(5)
+			}
+		case 'asc':
+			switch (sortBy.toLowerCase()) {
+				case 'quantity':
+					return await ProductNeedModel.find()
+						.sort({ Quantity: 'asc' })
+						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.limit(5)
+				case 'name':
+				default:
+					return await ProductNeedModel.find()
+						.sort({ Name: 'asc' })
+						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.limit(5)
+			}
 	}
+}
+
+export async function GetProductNeedsWithPage(pageNumber: number) {
+	return await ProductNeedModel.find()
+		.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+		.limit(5)
 }
 
 export async function GetProductNeedById(Id: ObjectId) {
