@@ -11,7 +11,7 @@ import {
 	GetReservationForFullDate,
 	GetByConfirm,
 } from '../entities/Reservation'
-import { ObjectId } from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 exports.Reservation_Get_All = async function (req: Request, res: Response) {
 	try {
@@ -216,10 +216,10 @@ exports.Reservation_Get = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -249,10 +249,10 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -311,10 +311,10 @@ exports.Reservation_Delete = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',

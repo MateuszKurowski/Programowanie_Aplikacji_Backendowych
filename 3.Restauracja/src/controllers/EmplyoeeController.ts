@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import { CheckPermission, CheckToken, DownloadPaylod, GenerateToken } from '../utility/Token'
 import { EmployeeModel, GetEmplyoeeByCredits, GetEmployeeById, GetEmployees, IEmployee } from '../entities/Employee'
-import { ObjectId } from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 // Logowanie pracownika / generowanie tokenu
 exports.Employee_Login = async function (req: Request, res: Response) {
@@ -173,10 +173,10 @@ exports.Employee_Get_By_Id = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -203,10 +203,10 @@ exports.Employee_Put_By_Id = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -260,10 +260,10 @@ exports.Employee_Delete_By_Id = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',

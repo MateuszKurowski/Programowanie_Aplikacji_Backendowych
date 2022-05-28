@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import { CheckPermission } from '../utility/Token'
 import { GetProducts, GetProductById, ProductModel, GetProductsWithPage } from '../entities/Product'
-import { ObjectId } from 'mongoose'
+import mongoose, { ObjectId } from 'mongoose'
 
 exports.Product_Get_All = async function (req: Request, res: Response) {
 	try {
@@ -201,10 +201,10 @@ exports.Product_Get = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -234,10 +234,10 @@ exports.Product_Put = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -289,10 +289,10 @@ exports.Product_Delete = async function (req: Request, res: Response) {
 		}
 	}
 
-	if (!req.params.id) res.status(400).send('Nieprawidłowe ID.')
-	let id: ObjectId
+	if (!req.params.id) res.status(400).send('Podano błędne ID.')
+	let id: any
 	try {
-		id = req.params.id as unknown as ObjectId
+		id  = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
