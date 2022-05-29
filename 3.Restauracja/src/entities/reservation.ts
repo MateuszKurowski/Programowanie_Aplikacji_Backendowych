@@ -42,7 +42,7 @@ const schema = new mongoose.Schema<IReservation>(
 			type: Date,
 			required: true,
 			validate(value: Date) {
-				//if (value <= new Date()) throw new Error('Rezerwować można tylko przyszłe terminy!')
+				if (value <= new Date()) throw new Error('Rezerwować można tylko przyszłe terminy!')
 			},
 		},
 		EndDate: {
@@ -130,4 +130,18 @@ export async function GetReservationForFullDate(date: Date) {
 	})
 		.populate('TableId', '_id TableNumber SeatsNumber', TableModel)
 		.exec()
+}
+
+export function ValidateDate(startDateString: string, endDateString: string) {
+	let startDate: Date
+	let endDate: Date
+	try {
+		startDate = new Date(startDateString)
+		endDate = new Date(endDateString)
+	} catch (error) {
+		throw new Error('Niepoprawna data rezerwacji')
+	}
+	if (!startDate || !endDate) throw new Error('Niepoprawna data rezerwacji')
+
+	if (endDate < startDate) throw new Error('Niepoprawna data rezerwacji')
 }

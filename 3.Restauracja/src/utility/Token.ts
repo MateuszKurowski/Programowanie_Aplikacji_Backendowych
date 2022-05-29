@@ -11,7 +11,7 @@ interface JwtPayload {
 
 export function GenerateToken(employee: any) {
 	console.log(employee._id)
-	return sign({ Id: employee._id }, secret)
+	return sign({ Id: employee._id }, secret, { expiresIn: '1h' })
 }
 
 export async function CheckToken(req: Request): Promise<IEmployee> {

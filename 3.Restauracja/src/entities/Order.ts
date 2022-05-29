@@ -44,27 +44,37 @@ export const OrderModel = mongoose.model<IOrder>(
 
 export async function GetOrders() {
 	return await OrderModel.find()
+		.populate('Employee', 'Name Surname')
+		.populate('Meal', 'Name Price')
+		.populate('OrderState', 'Name')
+		.populate('Table', 'TableNumber SeatsNumber')
+		.exec()
 }
 
 export async function GetOrderById(Id: ObjectId) {
 	return await OrderModel.findById(Id)
+		.populate('Employee', 'Name Surname')
+		.populate('Meal', 'Name Price')
+		.populate('OrderState', 'Name')
+		.populate('Table', 'TableNumber SeatsNumber')
+		.exec()
 }
 
 export async function GetOrderByTableId(Id: ObjectId) {
 	return await OrderModel.find({ Table: Id })
-		.populate('Employee')
-		.populate('Meal')
-		.populate('OrderState')
-		.populate('Table')
+		.populate('Employee', 'Name Surname')
+		.populate('Meal', 'Name Price')
+		.populate('OrderState', 'Name')
+		.populate('Table', 'TableNumber SeatsNumber')
 		.exec()
 }
 
 export async function GetOrderByEmployeeId(Id: ObjectId) {
 	return await OrderModel.find({ Employee: Id })
-		.populate('Employee')
-		.populate('Meal')
-		.populate('OrderState')
-		.populate('Table')
+		.populate('Employee', 'Name Surname')
+		.populate('Meal', 'Name Price')
+		.populate('OrderState', 'Name')
+		.populate('Table', 'TableNumber SeatsNumber')
 		.exec()
 }
 
@@ -72,8 +82,8 @@ export async function GetOrderByDate(startDate: Date, endDate: Date) {
 	return await OrderModel.find({
 		createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) },
 	})
-		.populate('Employee')
-		.populate('Meal')
+		.populate('Employee', 'Name Surname')
+		.populate('Meal', 'Name Price')
 		.populate('OrderState')
 		.populate('Table')
 		.exec()

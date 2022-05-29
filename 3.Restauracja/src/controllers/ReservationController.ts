@@ -10,6 +10,7 @@ import {
 	GetReservationForDate,
 	GetReservationForFullDate,
 	GetByConfirm,
+	ValidateDate,
 } from '../entities/Reservation'
 import mongoose from 'mongoose'
 
@@ -36,12 +37,15 @@ exports.Reservation_Get_All = async function (req: Request, res: Response) {
 			case 'today':
 				reservations = await GetReservationForToday()
 				break
-			case 'tomarrow':
+			case 'tomorrow':
 				reservations = await GetReservationForTomarrow()
 				break
 			default:
 				try {
 					const validDate = new Date(date)
+					if (!validDate) {
+						res.status(400).send('Podano nieprawidłową datę.')
+					}
 					if (validDate.getHours() == 0) {
 						reservations = await GetReservationForFullDate(validDate)
 					} else {
@@ -181,6 +185,13 @@ exports.Reservation_Post = async function (req: Request, res: Response) {
 		const clientEmail = req.body.ClientEmail
 		const startDate = req.body.StartDate
 		const endDate = req.body.EndDate
+		const isConfirmed = req.body.IsConfirmed ?? false
+		try {
+			ValidateDate(startDate, endDate)
+		} catch (error) {
+			res.status(400).send('Wprowadzono niepoprawną date rezerwacji.')
+			return
+		}
 
 		const reservation = new ReservationModel({
 			TableId: tableId,
@@ -188,7 +199,7 @@ exports.Reservation_Post = async function (req: Request, res: Response) {
 			ClientEmail: clientEmail,
 			StartDate: startDate,
 			EndDate: endDate,
-			IsConfirmed: false,
+			IsConfirmed: isConfirmed,
 		})
 		await reservation.save()
 		res.status(201).send({
@@ -268,6 +279,13 @@ exports.Reservation_Put = async function (req: Request, res: Response) {
 		res.status(404).send('Nie odnaleziono rekordu z podanym ID.')
 	} else {
 		try {
+			try {
+				ValidateDate(req.body.StartDate, req.body.EndDate)
+			} catch (error) {
+				res.status(400).send('Wprowadzono niepoprawną date rezerwacji.')
+				return
+			}
+
 			await ReservationModel.updateOne(
 				{ _id: id },
 				{

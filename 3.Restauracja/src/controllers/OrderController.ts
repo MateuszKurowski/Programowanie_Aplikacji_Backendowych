@@ -2,10 +2,11 @@ import { Response, Request } from 'express'
 import { CheckPermission } from '../utility/Token'
 import { GetOrders, GetOrderById, OrderModel } from '../entities/Order'
 import mongoose, { ObjectId } from 'mongoose'
-import { IEmployee } from '../entities/Employee'
+import { GetEmployeeById, IEmployee } from '../entities/Employee'
 import { ITable } from '../entities/Table'
 import { IOrderState } from '../entities/OrderState'
 import { MealModel } from '../entities/Meal'
+import { GetPositionById } from '../entities/Position'
 
 exports.Order_Get_All = async function (req: Request, res: Response) {
 	try {
@@ -147,8 +148,18 @@ exports.Order_Post = async function (req: Request, res: Response) {
 	}
 
 	const employee = req.body.Employee
+	const employeeObject = await GetEmployeeById(employee)
+	if (!employeeObject) {
+		res.status(400).send('Nie odnalezionow takiego kelnera.')
+		return
+	}
+	const position = await GetPositionById(employeeObject.Position)
+	if (position?.Name != 'Kelner') {
+		res.status(400).send('Zamówienia obsługują tylko kelnerzy.')
+		return
+	}
 	const mealString = req.body.Meal
-	const orderState = req.body.OrderState
+	const orderState = '6291fcf60b3f5a0e9c7dd89d'
 	const table = req.body.Table
 	let price = req.body.Price
 	let calculatedPrice: number = 0
@@ -202,7 +213,7 @@ exports.Order_Get = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -235,7 +246,7 @@ exports.Order_Put = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',
@@ -292,7 +303,7 @@ exports.Order_Delete = async function (req: Request, res: Response) {
 	if (!req.params.id) res.status(400).send('Podano błędne ID.')
 	let id: any
 	try {
-		id  = new mongoose.Types.ObjectId(req.params.id as string)
+		id = new mongoose.Types.ObjectId(req.params.id as string)
 	} catch (error: any) {
 		res.status(403).send({
 			Message: 'Podano błędne ID.',

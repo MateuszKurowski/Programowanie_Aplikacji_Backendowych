@@ -100,22 +100,82 @@ export async function InitDatabase() {
 
 	try {
 		await new MealCategoryModel({
-			Name: 'Mięsne',
+			Name: 'Zupy',
 		}).save()
 	} catch (MongoServerError) {}
 	try {
 		await new MealCategoryModel({
-			Name: 'Wegetariańskie',
+			Name: 'Dania z wołowiny',
 		}).save()
 	} catch (MongoServerError) {}
 	try {
 		await new MealCategoryModel({
-			Name: 'Wegańskie',
+			Name: 'Dania z drobiu',
 		}).save()
 	} catch (MongoServerError) {}
 	try {
 		await new MealCategoryModel({
-			Name: 'Bez glutenu',
+			Name: 'Dania z wieprzowiny',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Makarony',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Dania z ryb',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Dania jarskie',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Dania dla najmłodszych',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Sałatki',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Dodatki',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Desery',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Napoje ciepłe',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Drinki alkoholowe',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Drinki bezalkoholowe',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Alkohole',
+		}).save()
+	} catch (MongoServerError) {}
+	try {
+		await new MealCategoryModel({
+			Name: 'Dania bezglutenowe',
 		}).save()
 	} catch (MongoServerError) {}
 

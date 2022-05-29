@@ -4,6 +4,7 @@ import { GetTableById, GetTableByNumber, ITable } from '../entities/Table'
 import { CheckPermission } from '../utility/Token'
 import { ObjectId } from 'mongoose'
 import { GetEmployeeById } from '../entities/Employee'
+import { ValidateDate } from '../entities/Reservation'
 
 exports.Raport_Get_Orders_Per_Table = async function (req: Request, res: Response) {
 	try {
@@ -18,14 +19,14 @@ exports.Raport_Get_Orders_Per_Table = async function (req: Request, res: Respons
 		}
 	}
 
-	const tableInput = req.params.number
-	if (tableInput) {
+	const tableInput = req.params.id
+	if (!tableInput) {
 		res.status(400).send('Nieprawidłowe zapytanie.')
 		return
 	}
 	const tableNumber = parseInt(tableInput as string)
 	let orders: any[]
-	if (isNaN(tableNumber)) {
+	if (!isNaN(tableNumber) && tableNumber.toString().length == tableInput.length) {
 		const table = (await GetTableByNumber(tableNumber)) as unknown as ITable
 		orders = await GetOrderByTableId(table._id)
 	}
@@ -54,8 +55,8 @@ exports.Raport_Get_Orders_Per_Employee = async function (req: Request, res: Resp
 		}
 	}
 
-	const employeeInput = req.params.number
-	if (employeeInput) {
+	const employeeInput = req.params.id
+	if (!employeeInput) {
 		res.status(400).send('Nieprawidłowe zapytanie.')
 		return
 	}
@@ -86,7 +87,15 @@ exports.Raport_Get_Orders_In_Time = async function (req: Request, res: Response)
 
 	const startDateString = req.query.startdate as string
 	const endDateString = req.query.enddate as string
-	if (startDateString || endDateString) {
+
+	try {
+		ValidateDate(startDateString, endDateString)
+	} catch (error) {
+		res.status(400).send('Nieprawidłowe zapytanie. (Błędne daty)')
+		return
+	}
+
+	if (!startDateString || !endDateString) {
 		res.status(400).send('Nieprawidłowe zapytanie.')
 		return
 	}
@@ -123,7 +132,15 @@ exports.Raport_Get_Cash_In_Time = async function (req: Request, res: Response) {
 
 	const startDateString = req.query.startdate as string
 	const endDateString = req.query.enddate as string
-	if (startDateString || endDateString) {
+
+	try {
+		ValidateDate(startDateString, endDateString)
+	} catch (error) {
+		res.status(400).send('Nieprawidłowe zapytanie. (Błędne daty)')
+		return
+	}
+
+	if (!startDateString || !endDateString) {
 		res.status(400).send('Nieprawidłowe zapytanie.')
 		return
 	}
@@ -149,7 +166,7 @@ exports.Raport_Get_Cash_In_Time = async function (req: Request, res: Response) {
 
 	if (orders && orders.length > 0)
 		res.status(200).send({
-			Message: 'Okresowy przychód wyniósł: ' + calculatedPrice,
+			Message: 'Okresowy przychód wyniósł: ' + calculatedPrice + ' zł',
 			Orders: orders,
 		})
 	else res.status(404).send('Zapytanie nie zwróciło żadnego wyniku.')

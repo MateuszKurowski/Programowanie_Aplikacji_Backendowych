@@ -46,18 +46,18 @@ export async function GetProductsWithPageAndSort(pageNumber: number, sort: strin
 				case 'quantity':
 					return await ProductModel.find()
 						.sort({ Quantity: 'desc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 				case 'price':
 					return await ProductModel.find()
 						.sort({ Price: 'desc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 				case 'name':
 				default:
 					return await ProductModel.find()
 						.sort({ Name: 'desc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 			}
 		case 'asc':
@@ -65,18 +65,18 @@ export async function GetProductsWithPageAndSort(pageNumber: number, sort: strin
 				case 'quantity':
 					return await ProductModel.find()
 						.sort({ Quantity: 'asc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 				case 'price':
 					return await ProductModel.find()
 						.sort({ Price: 'asc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 				case 'name':
 				default:
 					return await ProductModel.find()
 						.sort({ Name: 'asc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 			}
 	}
@@ -84,7 +84,7 @@ export async function GetProductsWithPageAndSort(pageNumber: number, sort: strin
 
 export async function GetProductsWithPage(pageNumber: number) {
 	return await ProductModel.find()
-		.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+		.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 		.limit(5)
 }
 

@@ -20,7 +20,7 @@ const unitRoute = require('./Handlers/UnitHandler')
 const app = express()
 app.use(express.json())
 ConnectToDatabase().then(() => {
-	InitDatabase()
+	//InitDatabase()
 })
 
 app.use('/employee', employeeRoute)

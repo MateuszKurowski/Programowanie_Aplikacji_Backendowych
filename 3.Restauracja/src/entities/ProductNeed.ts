@@ -40,13 +40,13 @@ export async function GetProductNeedsWithPageAndSort(pageNumber: number, sort: s
 				case 'quantity':
 					return await ProductNeedModel.find()
 						.sort({ Quantity: 'desc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 				case 'name':
 				default:
 					return await ProductNeedModel.find()
 						.sort({ Name: 'desc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 			}
 		case 'asc':
@@ -54,13 +54,13 @@ export async function GetProductNeedsWithPageAndSort(pageNumber: number, sort: s
 				case 'quantity':
 					return await ProductNeedModel.find()
 						.sort({ Quantity: 'asc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 				case 'name':
 				default:
 					return await ProductNeedModel.find()
 						.sort({ Name: 'asc' })
-						.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+						.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 						.limit(5)
 			}
 	}
@@ -68,7 +68,7 @@ export async function GetProductNeedsWithPageAndSort(pageNumber: number, sort: s
 
 export async function GetProductNeedsWithPage(pageNumber: number) {
 	return await ProductNeedModel.find()
-		.skip(pageNumber == 1 ? 1 : pageNumber * 5 - 5)
+		.skip(pageNumber == 1 ? 0 : pageNumber * 5 - 5)
 		.limit(5)
 }
 
