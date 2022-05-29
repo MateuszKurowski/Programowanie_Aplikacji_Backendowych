@@ -348,7 +348,6 @@ Aby skonfigurować połączenie z bazą należy w katalogu utworzyć plik "conif
 {
 	"Employee": "",
 	"Meal": "",
-	"OrderState": "",
 	"Table": "",
 	"Price": ""
 }

@@ -353,7 +353,6 @@ To configure the connection with the database, create the "conifg.``` json" file
 {
 	"Employee": "",
 	"Meal": "",
-	"OrderState": "",
 	"Table": "",
 	"Price": ""
 }
