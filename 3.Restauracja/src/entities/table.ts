@@ -1,5 +1,5 @@
 import mongoose, { ObjectId } from 'mongoose'
-import { ReservationModel } from './Reservation'
+import { ReservationModel } from './reservation'
 
 export interface ITable {
 	_id: ObjectId
@@ -74,6 +74,21 @@ export async function GetBusyTablesForDate(date: Date) {
 		tableNumbers.push(tableNumber)
 	}
 	return tableNumbers
+}
+
+export async function IsTableBusy(Id: ObjectId, StartDate: Date, EndDate: Date) {
+	const reservations = await ReservationModel.find({
+		StartDate: { $lte: new Date(StartDate) },
+		EndDate: { $gte: new Date(EndDate) },
+	})
+		.select('TableId')
+		.populate('TableId', 'TableNumber')
+		.exec()
+	for (const reservation of reservations) {
+		const table = reservation.TableId as unknown as ITable
+		if (table._id == Id) return true
+	}
+	return false
 }
 
 export async function GetBusyTablesForFullDate(date: Date) {

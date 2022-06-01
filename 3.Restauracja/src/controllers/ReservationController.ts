@@ -11,8 +11,9 @@ import {
 	GetReservationForFullDate,
 	GetByConfirm,
 	ValidateDate,
-} from '../entities/Reservation'
+} from '../entities/reservation'
 import mongoose from 'mongoose'
+import { IsTableBusy } from '../entities/Table'
 
 exports.Reservation_Get_All = async function (req: Request, res: Response) {
 	try {
@@ -201,6 +202,9 @@ exports.Reservation_Post = async function (req: Request, res: Response) {
 			EndDate: endDate,
 			IsConfirmed: isConfirmed,
 		})
+		if (await IsTableBusy(tableId, startDate, endDate)) {
+			res.status(400).send('Stolik o tej porze jest zajęty!')
+		}
 		await reservation.save()
 		res.status(201).send({
 			Message: 'Dodawanie powiodło się.',
