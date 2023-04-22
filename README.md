@@ -1,2 +1,2 @@
-# Programowanie_Aplikacji_Backendowych
+# Backend Application Programming
 A repository of exercises done in backend application programming classes
